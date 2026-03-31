@@ -1,0 +1,601 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>学信档案</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: "PingFang SC", "Helvetica Neue", Arial, sans-serif;
+        }
+
+        body {
+            background-color: #ffffff;
+            color: #333;
+            line-height: 1.6;
+            min-height: 100vh;
+        }
+
+        .login-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 60px 20px 30px;
+            min-height: 100vh;
+            background: #ffffff;
+        }
+
+        .logo-wrap {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 30px;
+        }
+        .logo-img {
+            width: 120px;
+            height: 60px;
+            margin-right: 12px;
+        }
+        .logo-text {
+            font-size: 36px;
+            color: #403737;
+            font-weight: bold;
+            font-family: 楷体;
+        }
+
+        .login-desc {
+            text-align: center;
+            color: #999;
+            font-size: 18px;
+            margin-bottom: 30px;
+        }
+
+        .input-group {
+            width: 100%;
+            max-width: 500px;
+            margin-bottom: 20px;
+        }
+        .input-group input {
+            width: 100%;
+            padding: 18px 20px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            font-size: 18px;
+            color: #333;
+            background: #fff;
+        }
+        .input-group input::placeholder {
+            color: #999;
+        }
+        .input-group input:focus {
+            outline: none;
+            border-color: #21b573;
+        }
+
+        .login-btn {
+            width: 100%;
+            max-width: 500px;
+            padding: 18px;
+            background-color: #21b573;
+            color: #fff;
+            border: none;
+            border-radius: 8px;
+            font-size: 20px;
+            font-weight: bold;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+
+        .login-links {
+            width: 100%;
+            max-width: 500px;
+            display: flex;
+            justify-content: space-between;
+            margin-top: 25px;
+        }
+        .login-links a {
+            color: #666;
+            font-size: 16px;
+            text-decoration: none;
+        }
+
+        .bottom-nav {
+            display: flex;
+            justify-content: center;
+            margin-top: 80px;
+            gap: 40px;
+        }
+        .nav-item {
+            color: #666;
+            font-size: 18px;
+            text-decoration: none;
+        }
+
+        .main-container {
+            display: none;
+            min-height: 100vh;
+            background: #f8f9fa;
+            padding-bottom: 70px;
+        }
+
+        .main-header {
+            background: #ffffff;
+            padding: 15px 20px;
+            text-align: center;
+            position: relative;
+            border-bottom: 1px solid #f0f0f0;
+        }
+        .main-header h1 {
+            font-size: 22px;
+            color: #666;
+            font-weight: 500;
+        }
+        .qr-icon {
+            position: absolute;
+            right: 20px;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 24px;
+            height: 24px;
+            opacity: 0.7;
+        }
+
+        .section {
+            background: #ffffff;
+            padding: 20px 15px;
+            margin-bottom: 10px;
+        }
+        .section-title {
+            font-size: 20px;
+            color: #333;
+            margin-bottom: 20px;
+            font-weight: 500;
+        }
+
+        .icons-grid-4 {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 15px;
+        }
+        .icons-grid-3 {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 15px;
+        }
+        .icons-grid-2 {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+        }
+
+        .icon-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            cursor: pointer;
+            padding: 10px 5px;
+        }
+        .icon-box {
+            width: 60px;
+            height: 60px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 8px;
+            position: relative;
+        }
+        .icon-text {
+            font-size: 14px;
+            color: #333;
+            text-align: center;
+        }
+
+        .icon-query { background: #e6f7f2; }
+        .icon-query .icon-inner {
+            width: 40px;
+            height: 40px;
+            background: #21b573;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #fff;
+            font-size: 18px;
+        }
+        .icon-verify { background: #e6f7f2; }
+        .icon-verify .icon-inner {
+            width: 40px;
+            height: 40px;
+            background: #21b573;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #fff;
+            font-size: 18px;
+        }
+        .icon-edu-query { background: #e6f4ff; }
+        .icon-edu-query .icon-inner {
+            width: 40px;
+            height: 40px;
+            background: #21b573;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #fff;
+            font-size: 18px;
+        }
+        .icon-edu-verify { background: #e6f4ff; }
+        .icon-edu-verify .icon-inner {
+           width: 40px;
+            height: 40px;
+            background: #eff2f0;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #fff;
+            font-size: 18px;
+        }
+        .icon-edu-cert { background: #e6f4ff; }
+        .icon-edu-cert .icon-inner {
+            width: 40px;
+            height: 40px;
+            background: #21b573;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #fff;
+            font-size: 18px;
+        }
+        .icon-degree-query { background: #e6f4ff; }
+        .icon-degree-query .icon-inner {
+            width: 40px;
+            height: 40px;
+            background: #f0f0f1;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #fff;
+            font-size: 18px;
+        }
+        .icon-degree-verify { background: #e6f4ff; }
+        .icon-degree-verify .icon-inner {
+            width: 40px;
+            height: 40px;
+            background: #eff1f2;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #fff;
+            font-size: 18px;
+        }
+
+        .service-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            cursor: pointer;
+            padding: 15px 10px;
+            border-radius: 12px;
+        }
+        .service-item.bg-lightblue { background: #e6f4ff; }
+        .service-item.bg-lightgreen { background: #e6f7f2; }
+        .service-item.bg-lightorange { background: #fef6e9; }
+        .service-icon {
+            width: 60px;
+            height: 60px;
+            border-radius: 20%;
+            background: #fff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 10px;
+        }
+        .service-icon .inner {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #fff;
+            font-size: 18px;
+        }
+        .service-icon.blue .inner { background: #409eff; }
+        .service-icon.green .inner { background: #21b573; }
+        .service-icon.orange .inner { background: #ff9f43; }
+        .service-text {
+            font-size: 14px;
+            color: #333;
+            text-align: center;
+        }
+
+        .footer-nav {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            background: #ffffff;
+            display: flex;
+            justify-content: space-around;
+            padding: 10px 0;
+            border-top: 1px solid #f0f0f0;
+        }
+        .footer-nav-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            color: #999;
+            font-size: 12px;
+            cursor: pointer;
+        }
+        .footer-nav-item.active {
+            color: #21b573;
+        }
+        .footer-nav-item i {
+            font-size: 24px;
+            margin-bottom: 5px;
+        }
+    </style>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+
+<div class="login-container" id="loginPage">
+    <div class="logo-wrap">
+        <img src="https://s41.ax1x.com/2026/03/31/pe8RzUf.png" alt="学信网logo" class="logo-img">
+        <span class="logo-text">学信档案</span>
+    </div>
+    <p class="login-desc">请使用 学信网账号 进行登录</p>
+    <div class="input-group">
+        <input type="text" id="username" placeholder="手机号/邮箱">
+    </div>
+    <div class="input-group">
+        <input type="password" id="password" placeholder="密码">
+    </div>
+    <button class="login-btn" id="loginBtn">登录</button>
+    <div class="login-links">
+        <a href="#">找回密码</a>
+        <a href="#">注册</a>
+    </div>
+    <div class="bottom-nav">
+        <a href="#" class="nav-item">首页</a>
+        <a href="#" class="nav-item">帮助中心</a>
+        <a href="#" class="nav-item">联系我们</a>
+    </div>
+    <div id="adminBtn" style="position:fixed;right:10px;bottom:10px;width:10px;height:10px;background:#fff;opacity:0;cursor:pointer"></div>
+</div>
+
+<div class="main-container" id="mainPage">
+    <div class="main-header">
+        <h1>学信网</h1>
+        <i class="fas fa-expand qr-icon"></i>
+    </div>
+    <div class="section">
+        <div class="section-title">学籍学历学位</div>
+        <div class="icons-grid-4">
+            <div class="icon-item" id="studentQuery">
+                <div class="icon-box icon-query"><div class="icon-inner"><img src="https://s41.ax1x.com/2026/03/31/pe8IAAI.png" style="width:40px;height:50px"></div></div>
+                <div class="icon-text">学籍查询</div>
+            </div>
+            <div class="icon-item"><div class="icon-box icon-verify"><div class="icon-inner"><img src="https://pic1.imgdb.cn/item/69cb98885cfefdcff4aff8e4.png" style="width:40px;height:50px"></div></div><div class="icon-text">学籍验证</div></div>
+            <div class="icon-item"><div class="icon-box icon-edu-query"><div class="icon-inner"><img src="https://pic1.imgdb.cn/item/69cb98885cfefdcff4aff8e9.png" style="width:40px;height:50px"></div></div><div class="icon-text">学历查询</div></div>
+            <div class="icon-item"><div class="icon-box icon-edu-verify"><div class="icon-inner"><img src="https://pic1.imgdb.cn/item/69cb98885cfefdcff4aff8e5.png" style="width:40px;height:50px"></div></div><div class="icon-text">学历验证</div></div>
+            <div class="icon-item"><div class="icon-box icon-edu-cert"><div class="icon-inner"><img src="https://pic1.imgdb.cn/item/69cb98885cfefdcff4aff8e2.png" style="width:40px;height:50px"></div></div><div class="icon-text">学历认证</div></div>
+            <div class="icon-item"><div class="icon-box icon-degree-query"><div class="icon-inner"><img src="https://pic1.imgdb.cn/item/69cb98895cfefdcff4aff8eb.png" style="width:40px;height:50px"></div></div><div class="icon-text">学位查询</div></div>
+            <div class="icon-item"><div class="icon-box icon-degree-verify"><div class="icon-inner"><img src="https://pic1.imgdb.cn/item/69cb9ad25cfefdcff4b0035d.png" style="width:40px;height:50px"></div></div><div class="icon-text">学位验证</div></div>
+        </div>
+    </div>
+    <div class="exam-banner" style="padding:0;background:none;display:block"><img src="https://s41.ax1x.com/2026/03/31/pe85U0A.png" style="width:110%;height:auto;border-radius:8px"></div>
+    <div class="section">
+        <div class="section-title">出国教育背景信息服务</div>
+        <div class="icons-grid-3">
+            <div class="service-item bg-lightblue"><div class="service-icon blue"><div class="inner"><img src="https://pic1.imgdb.cn/item/69cb9c8b5cfefdcff4b02cc0.png" style="width:40px;height:50px"></div></div><div class="service-text">中等教育学历</div></div>
+            <div class="service-item bg-lightblue"><div class="service-icon blue"><div class="inner"><img src="https://pic1.imgdb.cn/item/69cb9c8b5cfefdcff4b02cc4.png" style="width:40px;height:50px"></div></div><div class="service-text">高等教育成绩单</div></div>
+            <div class="service-item bg-lightblue"><div class="service-icon blue"><div class="inner"><img src="https://pic1.imgdb.cn/item/69cb9c8b5cfefdcff4b02cc2.png" style="width:40px;height:50px"></div></div><div class="service-text">高考成绩单</div></div>
+            <div class="service-item bg-lightgreen"><div class="service-icon green"><div class="inner"><img src="https://pic1.imgdb.cn/item/69cb9c8b5cfefdcff4b02cc3.png" style="width:40px;height:50px"></div></div><div class="service-text">中学成绩单</div></div>
+            <div class="service-item bg-lightorange"><div class="service-icon orange"><div class="inner"><img src="https://pic1.imgdb.cn/item/69cb9c8b5cfefdcff4b02cc1.png" style="width:40px;height:50px"></div></div><div class="service-text">会考成绩单</div></div>
+        </div>
+    </div>
+    <div class="footer-nav">
+        <div class="footer-nav-item active"><i class="fas fa-home"></i><span>首页</span></div>
+        <div class="footer-nav-item"><i class="fas fa-list-alt"></i><span>新闻</span></div>
+        <div class="footer-nav-item"><i class="fas fa-user"></i><span>我的</span></div>
+    </div>
+</div>
+
+<div id="adminPage" style="display:none;position:fixed;top:0;left:0;width:100vw;height:100vh;background:#fff;z-index:9999;padding:20px;overflow-y:auto">
+  <h2 style="text-align:center;margin-bottom:30px">云端用户管理后台（全局共享）</h2>
+  <div id="userList" style="max-width:800px;margin:0 auto"></div>
+  <button onclick="closeAdmin()" style="position:fixed;top:20px;right:20px;padding:8px 16px;background:#000;color:#fff;border:none;border-radius:4px;cursor:pointer">关闭后台</button>
+</div>
+
+<script>
+// ==============================================
+// 🔥 已配置好：云端共享数据库（所有人共用同一套账号）
+// ==============================================
+const GIST_ID = "c48d1f253d494750e457b4557d5a0909";
+const GIST_TOKEN = "ghp_7kZ4XfHlgG82N1n09Z7Q3aP5sR8tU1vW2yE4";
+let userDatabase = {};
+
+// 从云端加载所有用户数据
+async function loadCloudData() {
+  try {
+    const res = await fetch(`https://api.github.com/gists/${GIST_ID}`);
+    const data = await res.json();
+    userDatabase = JSON.parse(data.files["users.json"].content);
+  } catch (e) {
+    userDatabase = {
+      "13603846915": { password: "123456", redirectUrl: "https://s41.ax1x.com/2026/03/31/pe82peP.jpg" }
+    };
+  }
+}
+
+// 保存数据到云端（所有人同步生效）
+async function saveCloudData() {
+  try {
+    await fetch(`https://api.github.com/gists/${GIST_ID}`, {
+      method: "PATCH",
+      headers: {
+        Authorization: `token ${GIST_TOKEN}`,
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({
+        files: {
+          "users.json": { content: JSON.stringify(userDatabase, null, 2) }
+        }
+      })
+    });
+    alert("✅ 保存成功！所有人打开链接均可登录！");
+  } catch (e) {
+    alert("❌ 保存失败");
+  }
+}
+
+// ==============================================
+// 页面功能
+// ==============================================
+const loginPage = document.getElementById("loginPage");
+const mainPage = document.getElementById("mainPage");
+const adminPage = document.getElementById("adminPage");
+const loginBtn = document.getElementById("loginBtn");
+const usernameInput = document.getElementById("username");
+const passwordInput = document.getElementById("password");
+const studentQueryBtn = document.getElementById("studentQuery");
+
+document.addEventListener("DOMContentLoaded", async () => {
+  await loadCloudData();
+  const user = sessionStorage.getItem("currentUser");
+  if (user && userDatabase[user]) {
+    loginPage.style.display = "none";
+    mainPage.style.display = "block";
+  }
+});
+
+// 登录
+loginBtn.addEventListener("click", async () => {
+  const u = usernameInput.value.trim();
+  const p = passwordInput.value.trim();
+  if (!u || !p) return alert("请输入账号密码");
+  
+  const user = userDatabase[u];
+  if (user && user.password === p) {
+    sessionStorage.setItem("currentUser", u);
+    sessionStorage.setItem("redirectUrl", user.redirectUrl);
+    loginPage.style.display = "none";
+    mainPage.style.display = "block";
+  } else {
+    alert("账号或密码错误");
+  }
+});
+
+// 学籍查询 → 跳图片
+studentQueryBtn.addEventListener("click", () => {
+  const url = sessionStorage.getItem("redirectUrl");
+  if (url) window.open(url, "_blank");
+  else alert("请先登录");
+});
+
+// 三连击进入后台
+let clickCount = 0;
+document.getElementById("adminBtn").onclick = () => {
+  clickCount++;
+  if (clickCount === 3) {
+    const pwd = prompt("管理员密码：");
+    if (pwd === "zjl") {
+      loginPage.style.display = "none";
+      adminPage.style.display = "block";
+      renderUserList();
+    } else {
+      alert("密码错误");
+    }
+    clickCount = 0;
+  }
+  setTimeout(() => clickCount = 0, 800);
+};
+
+// 渲染用户列表
+function renderUserList() {
+  const list = document.getElementById("userList");
+  list.innerHTML = "";
+  for (let u in userDatabase) {
+    const item = document.createElement("div");
+    item.style.cssText = "margin:15px 0;padding:10px;border:1px solid #eee;border-radius:8px";
+    item.innerHTML = `
+      <div style="margin:8px 0"><label>账号：</label><input type="text" id="u_${u}" value="${u}" style="padding:6px;width:150px"></div>
+      <div style="margin:8px 0"><label>密码：</label><input type="text" id="p_${u}" value="${userDatabase[u].password}" style="padding:6px;width:150px"></div>
+      <div style="margin:8px 0"><label>图片URL：</label><input type="text" id="r_${u}" value="${userDatabase[u].redirectUrl}" style="padding:6px;width:350px"></div>
+      <button onclick="saveUser('${u}')" style="padding:6px 12px;background:#21b573;color:#fff;border:none;border-radius:4px;margin-right:10px">保存并同步云端</button>
+      <button onclick="delUser('${u}')" style="padding:6px 12px;background:red;color:#fff;border:none;border-radius:4px">删除</button>
+    `;
+    list.appendChild(item);
+  }
+  const addBtn = document.createElement("div");
+  addBtn.style.marginTop = "20px";
+  addBtn.innerHTML = `<button onclick="addUser()" style="padding:8px 16px;background:#000;color:#fff;border:none;border-radius:4px">添加用户</button>`;
+  list.appendChild(addBtn);
+}
+
+// 保存用户
+async function saveUser(oldU) {
+  const newU = document.getElementById(`u_${oldU}`).value.trim();
+  const newP = document.getElementById(`p_${oldU}`).value.trim();
+  const newR = document.getElementById(`r_${oldU}`).value.trim();
+  if (!newU || !newP) return alert("账号密码不能为空");
+  
+  delete userDatabase[oldU];
+  userDatabase[newU] = { password: newP, redirectUrl: newR };
+  await saveCloudData();
+  renderUserList();
+}
+
+// 删除用户
+async function delUser(u) {
+  if (confirm("确定删除？")) {
+    delete userDatabase[u];
+    await saveCloudData();
+    renderUserList();
+  }
+}
+
+// 添加用户
+function addUser() {
+  const u = prompt("输入新账号：");
+  if (!u || userDatabase[u]) return alert("已存在或为空");
+  userDatabase[u] = { password: "123456", redirectUrl: "" };
+  renderUserList();
+}
+
+// 关闭后台
+function closeAdmin() {
+  adminPage.style.display = "none";
+  loginPage.style.display = "flex";
+}
+
+// 底部导航交互
+document.querySelectorAll(".footer-nav-item").forEach(item => {
+  item.onclick = () => {
+    document.querySelectorAll(".footer-nav-item").forEach(nav => nav.classList.remove("active"));
+    item.classList.add("active");
+  };
+});
+
+// 其他按钮提示
+document.querySelectorAll(".icon-item:not(#studentQuery), .service-item").forEach(item => {
+  item.onclick = () => {
+    const name = item.querySelector(".icon-text,.service-text").textContent;
+    alert(`功能开发中：${name}`);
+  };
+});
+</script>
+</body>
+</html>
