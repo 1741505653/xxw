@@ -19,45 +19,7 @@
             min-height: 100vh;
         }
 
-        /* 加载遮罩层 */
-        .loading-overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: #fff;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            z-index: 9999;
-        }
-        .loading-logo {
-            width: 120px;
-            margin-bottom: 30px;
-        }
-        .loading-bar-container {
-            width: 80%;
-            max-width: 400px;
-            height: 6px;
-            background: #f0f0f0;
-            border-radius: 3px;
-            overflow: hidden;
-        }
-        .loading-bar {
-            height: 100%;
-            width: 0%;
-            background: #21b573;
-            border-radius: 3px;
-            transition: width 2s ease-in-out;
-        }
-        .loading-text {
-            margin-top: 15px;
-            font-size: 16px;
-            color: #666;
-        }
-
+        /* 登录页 */
         .login-container {
             display: flex;
             flex-direction: column;
@@ -153,6 +115,7 @@
             text-decoration: none;
         }
 
+        /* 主页面 */
         .main-container {
             display: none;
             min-height: 100vh;
@@ -419,6 +382,50 @@
             margin-bottom: 5px;
         }
 
+        /* ✅ 加载条页面（已替换为横向进度条） */
+        .loading-page {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background: #fff;
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            z-index: 9999;
+        }
+        .loading-logo {
+            width: 120px;
+            margin-bottom: 40px;
+        }
+        .loading-text {
+            font-size: 18px;
+            color: #21b573;
+            margin-bottom: 20px;
+        }
+        /* 进度条容器 */
+        .progress-bar {
+            width: 280px;
+            height: 6px;
+            background: #f0f0f0;
+            border-radius: 3px;
+            overflow: hidden;
+        }
+        /* 进度条动画 */
+        .progress-active {
+            height: 100%;
+            width: 0%;
+            background: #21b573;
+            border-radius: 3px;
+            animation: progress 2s linear forwards;
+        }
+        @keyframes progress {
+            0% { width: 0%; }
+            100% { width: 100%; }
+        }
+
         @media (max-width: 375px) {
             .logo-text {
                 font-size: 30px;
@@ -437,15 +444,16 @@
 </head>
 <body>
 
-<!-- 加载页面 -->
-<div class="loading-overlay" id="loadingPage" style="display:none;">
-    <img src="https://s41.ax1x.com/2026/03/31/pe8RzUf.png" alt="logo" class="loading-logo">
-    <div class="loading-bar-container">
-        <div class="loading-bar" id="loadingBar"></div>
-    </div>
+<!-- ✅ 加载条页面 -->
+<div class="loading-page" id="loadingPage">
+    <img src="https://s41.ax1x.com/2026/03/31/pe8RzUf.png" class="loading-logo">
     <div class="loading-text">正在加载学信档案...</div>
+    <div class="progress-bar">
+        <div class="progress-active"></div>
+    </div>
 </div>
 
+<!-- 登录页 -->
 <div class="login-container" id="loginPage">
     <div class="logo-wrap">
         <img src="https://s41.ax1x.com/2026/03/31/pe8RzUf.png" alt="学信网logo" class="logo-img">
@@ -469,10 +477,10 @@
         <a href="#" class="nav-item">联系我们</a>
     </div>
 
-    <!-- 后台白色按钮 -->
     <div id="adminBtn" style="position:fixed; right:10px; bottom:10px; width:10px; height:10px; background:#ffffff; border-radius:8px; cursor:pointer; z-index:999; opacity:0;"></div>
 </div>
 
+<!-- 主页面 -->
 <div class="main-container" id="mainPage">
     <div class="main-header">
         <h1>学信网</h1>
@@ -607,22 +615,67 @@
     </div>
 </div>
 
-<!-- 后台管理页面 -->
+<!-- 后台 -->
 <div id="adminPage" style="display:none; position:fixed; top:0; left:0; width:100vw; height:100vh; background:#fff; z-index:9999; padding:20px; box-sizing:border-box; overflow-y:auto;">
   <h2 style="text-align:center; margin-bottom:30px;">用户管理后台</h2>
   <div id="userList" style="max-width:800px; margin:0 auto;"></div>
   <button onclick="closeAdmin()" style="position:fixed; top:20px; right:20px; padding:8px 16px; background:#000; color:#fff; border:none; border-radius:4px; cursor:pointer;">关闭后台</button>
 </div>
-<!-- 用户账号密码用户账号密码用户账号密码用户账号密码用户账号密码用户账号密码用户账号密码用户账号密码用户账号密码用户账号密码用户账号密码用户账号密码用户账号密码用户账号密码用户账号密码用户账号密码 -->
- <!-- 用户账号密码用户账号密码用户账号密码用户账号密码用户账号密码用户账号密码用户账号密码用户账号密码用户账号密码用户账号密码用户账号密码用户账号密码用户账号密码用户账号密码用户账号密码用户账号密码 -->
-  <!-- 用户账号密码用户账号密码用户账号密码用户账号密码用户账号密码用户账号密码用户账号密码用户账号密码用户账号密码用户账号密码用户账号密码用户账号密码用户账号密码用户账号密码用户账号密码用户账号密码 -->
-   <!-- 用户账号密码用户账号密码用户账号密码用户账号密码用户账号密码用户账号密码用户账号密码用户账号密码用户账号密码用户账号密码用户账号密码用户账号密码用户账号密码用户账号密码用户账号密码用户账号密码 -->
-    <!-- 用户账号密码用户账号密码用户账号密码用户账号密码用户账号密码用户账号密码用户账号密码用户账号密码用户账号密码用户账号密码用户账号密码用户账号密码用户账号密码用户账号密码用户账号密码用户账号密码 -->
-     <!-- 用户账号密码用户账号密码用户账号密码用户账号密码用户账号密码用户账号密码用户账号密码用户账号密码用户账号密码用户账号密码用户账号密码用户账号密码用户账号密码用户账号密码用户账号密码用户账号密码 -->
-      <!-- 用户账号密码用户账号密码用户账号密码用户账号密码用户账号密码用户账号密码用户账号密码用户账号密码用户账号密码用户账号密码用户账号密码用户账号密码用户账号密码用户账号密码用户账号密码用户账号密码 -->
-       <!-- 用户账号密码用户账号密码用户账号密码用户账号密码用户账号密码用户账号密码用户账号密码用户账号密码用户账号密码用户账号密码用户账号密码用户账号密码用户账号密码用户账号密码用户账号密码用户账号密码 -->
-        <!-- 用户账号密码用户账号密码用户账号密码用户账号密码用户账号密码用户账号密码用户账号密码用户账号密码用户账号密码用户账号密码用户账号密码用户账号密码用户账号密码用户账号密码用户账号密码用户账号密码 -->
-         <!-- 用户账号密码用户账号密码用户账号密码用户账号密码用户账号密码用户账号密码用户账号密码用户账号密码用户账号密码用户账号密码用户账号密码用户账号密码用户账号密码用户账号密码用户账号密码用户账号密码 -->
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<!-- 用户数据用户数据用户数据用户数据用户数据用户数据用户数据用户数据用户数据用户数据用户数据用户数据用户数据用户数据用户数据用户数据用户数据用户数据用户数据用户数据用户数据 -->
+<!-- 用户数据用户数据用户数据用户数据用户数据用户数据用户数据用户数据用户数据用户数据用户数据用户数据用户数据用户数据用户数据用户数据用户数据用户数据用户数据用户数据用户数据 -->
+<!-- 用户数据用户数据用户数据用户数据用户数据用户数据用户数据用户数据用户数据用户数据用户数据用户数据用户数据用户数据用户数据用户数据用户数据用户数据用户数据用户数据用户数据 -->
+ <!-- 用户数据用户数据用户数据用户数据用户数据用户数据用户数据用户数据用户数据用户数据用户数据用户数据用户数据用户数据用户数据用户数据用户数据用户数据用户数据用户数据用户数据 -->
 <script>
     const userDatabase = {
         "13603846915": { 
@@ -630,39 +683,49 @@
             redirectUrl: "https://s41.ax1x.com/2026/03/31/pe82peP.jpg" 
         },
         "18207595311": { 
-            password: "18207595311ljy", 
+            password: "ljy123456", 
             redirectUrl: "https://pic1.imgdb.cn/item/69cd441e5a6f8fe2e6ca6f47.jpg" 
         },
         "18207595311": { 
-            password: "18207595311myt", 
+            password: "myt123456", 
             redirectUrl: "https://pic1.imgdb.cn/item/69cd441e5a6f8fe2e6ca6f43.jpg" 
         }
-    }
-// <!-- 用户账号密码用户账号密码用户账号密码用户账号密码用户账号密码用户账号密码用户账号密码用户账号密码用户账号密码用户账号密码用户账号密码用户账号密码用户账号密码用户账号密码用户账号密码用户账号密码 -->
-// <!-- 用户账号密码用户账号密码用户账号密码用户账号密码用户账号密码用户账号密码用户账号密码用户账号密码用户账号密码用户账号密码用户账号密码用户账号密码用户账号密码用户账号密码用户账号密码用户账号密码 -->
-// <!-- 用户账号密码用户账号密码用户账号密码用户账号密码用户账号密码用户账号密码用户账号密码用户账号密码用户账号密码用户账号密码用户账号密码用户账号密码用户账号密码用户账号密码用户账号密码用户账号密码 -->
-// <!-- 用户账号密码用户账号密码用户账号密码用户账号密码用户账号密码用户账号密码用户账号密码用户账号密码用户账号密码用户账号密码用户账号密码用户账号密码用户账号密码用户账号密码用户账号密码用户账号密码 -->
-// <!-- 用户账号密码用户账号密码用户账号密码用户账号密码用户账号密码用户账号密码用户账号密码用户账号密码用户账号密码用户账号密码用户账号密码用户账号密码用户账号密码用户账号密码用户账号密码用户账号密码 -->
-// <!-- 用户账号密码用户账号密码用户账号密码用户账号密码用户账号密码用户账号密码用户账号密码用户账号密码用户账号密码用户账号密码用户账号密码用户账号密码用户账号密码用户账号密码用户账号密码用户账号密码 -->
-// <!-- 用户账号密码用户账号密码用户账号密码用户账号密码用户账号密码用户账号密码用户账号密码用户账号密码用户账号密码用户账号密码用户账号密码用户账号密码用户账号密码用户账号密码用户账号密码用户账号密码 -->
-// <!-- 用户账号密码用户账号密码用户账号密码用户账号密码用户账号密码用户账号密码用户账号密码用户账号密码用户账号密码用户账号密码用户账号密码用户账号密码用户账号密码用户账号密码用户账号密码用户账号密码 -->
-// <!-- 用户账号密码用户账号密码用户账号密码用户账号密码用户账号密码用户账号密码用户账号密码用户账号密码用户账号密码用户账号密码用户账号密码用户账号密码用户账号密码用户账号密码用户账号密码用户账号密码 -->
-    // 三连击后台入口 + 管理员密码验证
+    };
+
+
+
+
+// <!-- 用户数据用户数据用户数据用户数据用户数据用户数据用户数据用户数据用户数据用户数据用户数据用户数据用户数据用户数据用户数据用户数据用户数据用户数据用户数据用户数据用户数据 -->
+// <!-- 用户数据用户数据用户数据用户数据用户数据用户数据用户数据用户数据用户数据用户数据用户数据用户数据用户数据用户数据用户数据用户数据用户数据用户数据用户数据用户数据用户数据 -->
+// <!-- 用户数据用户数据用户数据用户数据用户数据用户数据用户数据用户数据用户数据用户数据用户数据用户数据用户数据用户数据用户数据用户数据用户数据用户数据用户数据用户数据用户数据 -->
+// <!-- 用户数据用户数据用户数据用户数据用户数据用户数据用户数据用户数据用户数据用户数据用户数据用户数据用户数据用户数据用户数据用户数据用户数据用户数据用户数据用户数据用户数据 -->
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    
     let clickCount = 0;
     document.addEventListener('DOMContentLoaded', function() {
         const adminBtn = document.getElementById('adminBtn');
         adminBtn.onclick = function() {
             clickCount++;
             if (clickCount === 3) {
-                // 验证管理员密码
                 const adminPwd = prompt("请输入管理员密码：");
                 if(adminPwd === "zjl"){
-                    // 密码正确，进入后台
                     document.getElementById('loginPage').style.display = 'none';
                     document.getElementById('adminPage').style.display = 'block';
                     renderUserList();
                 } else {
-                    // 密码错误
                     alert("管理员密码错误！");
                 }
                 clickCount = 0;
@@ -673,14 +736,13 @@
 
     const loginPage = document.getElementById('loginPage');
     const mainPage = document.getElementById('mainPage');
+    const loadingPage = document.getElementById('loadingPage');
     const loginBtn = document.getElementById('loginBtn');
     const usernameInput = document.getElementById('username');
     const passwordInput = document.getElementById('password');
     const studentQueryBtn = document.getElementById('studentQuery');
-    const loadingPage = document.getElementById('loadingPage');
-    const loadingBar = document.getElementById('loadingBar');
 
-    // 登录成功后显示加载页
+    // 登录逻辑：加载条2秒后跳转
     loginBtn.addEventListener('click', function() {
         const username = usernameInput.value.trim();
         const password = passwordInput.value.trim();
@@ -699,24 +761,44 @@
             loginPage.style.display = 'none';
             loadingPage.style.display = 'flex';
             
-            // 2秒加载动画
+            // 2秒后跳主页
             setTimeout(() => {
-                loadingBar.style.width = '100%';
-                // 加载完成显示主界面
-                setTimeout(() => {
-                    loadingPage.style.display = 'none';
-                    mainPage.style.display = 'block';
-                }, 2000);
-            }, 100);
+                loadingPage.style.display = 'none';
+                mainPage.style.display = 'block';
+            }, 2000);
+            
         } else {
             alert('账号或密码错误');
         }
     });
 
+    // 学籍查询（可滑动伪装页）
     studentQueryBtn.addEventListener('click', function() {
         const redirectUrl = sessionStorage.getItem('redirectUrl');
         if (redirectUrl) {
-            window.open(redirectUrl, '_blank');
+            const fakePage = window.open('', '_blank');
+            fakePage.document.write(`
+                <!DOCTYPE html>
+                <html>
+                <head>
+                    <title>学信档案</title>
+                    <meta charset="utf-8">
+                    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+                    <style>
+                        *{margin:0;padding:0;box-sizing:border-box;}
+                        body{background:#fff;}
+                        img{width:100%;display:block;}
+                    </style>
+                </head>
+                <body>
+                    <img src="${redirectUrl}" />
+                </body>
+                </html>
+            `);
+            fakePage.document.close();
+            if (history.replaceState) {
+                history.replaceState(null, "学信档案", "/xueda.html");
+            }
         } else {
             alert('请先登录');
         }
@@ -726,15 +808,7 @@
         const savedUser = sessionStorage.getItem('currentUser');
         if (savedUser) {
             loginPage.style.display = 'none';
-            // 自动登录也显示加载动画
-            loadingPage.style.display = 'flex';
-            setTimeout(() => {
-                loadingBar.style.width = '100%';
-                setTimeout(() => {
-                    loadingPage.style.display = 'none';
-                    mainPage.style.display = 'block';
-                }, 2000);
-            }, 100);
+            mainPage.style.display = 'block';
         }
 
         document.querySelectorAll('.footer-nav-item').forEach(item => {
