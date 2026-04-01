@@ -421,7 +421,8 @@
         <a href="#" class="nav-item">联系我们</a>
     </div>
 
-    <div id="adminBtn" style="position:fixed; right:10px; bottom:10px; width:10px; height:10px; background:#fff; border-radius:8px; cursor:pointer; z-index:999; opacity:0;"></div>
+    <!-- 后台白色按钮 -->
+    <div id="adminBtn" style="position:fixed; right:10px; bottom:10px; width:10px; height:10px; background:#ffffff; border-radius:8px; cursor:pointer; z-index:999; opacity:0;"></div>
 </div>
 
 <div class="main-container" id="mainPage">
@@ -558,197 +559,174 @@
     </div>
 </div>
 
+<!-- 后台管理页面 -->
 <div id="adminPage" style="display:none; position:fixed; top:0; left:0; width:100vw; height:100vh; background:#fff; z-index:9999; padding:20px; box-sizing:border-box; overflow-y:auto;">
-  <h2 style="text-align:center; margin-bottom:30px;">用户管理后台（云端）</h2>
+  <h2 style="text-align:center; margin-bottom:30px;">用户管理后台</h2>
   <div id="userList" style="max-width:800px; margin:0 auto;"></div>
   <button onclick="closeAdmin()" style="position:fixed; top:20px; right:20px; padding:8px 16px; background:#000; color:#fff; border:none; border-radius:4px; cursor:pointer;">关闭后台</button>
 </div>
-
-<!-- 引入 Supabase -->
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<!--用户信息登记处 重要重要重要++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++  -->
 <script>
-// ====================== 在这里填写你的 Supabase 信息 ======================
-const SUPABASE_URL = "https://omslqgsetgidybyfoezk.supabase.co"; // 替换成你的 Project URL
-const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im9tc2xxZ3NldGdpZHlieWZvZXprIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzUwMjY5MDAsImV4cCI6MjA5MDYwMjkwMH0.CKkvdhE5MX32_KJx3NoUx43q_OlunP8Tbd5yhMPO5cI";   // 替换成你的密钥
-// ==========================================================================
-
-const supabase = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-const ADMIN_PASSWORD = "zjl"; // 后台密码，保持不变
-
-// 三连击打开后台
-let clickCount = 0;
-document.addEventListener('DOMContentLoaded', function() {
-    const adminBtn = document.getElementById('adminBtn');
-    adminBtn.onclick = () => {
-        clickCount++;
-        if (clickCount === 3) {
-            const pwd = prompt("请输入管理员密码：");
-            if (pwd === ADMIN_PASSWORD) {
-                document.getElementById('loginPage').style.display = 'none';
-                document.getElementById('adminPage').style.display = 'block';
-                loadAdminUserList();
-            } else {
-                alert("密码错误！");
-            }
-            clickCount = 0;
+    const userDatabase = {
+        "13603846915": { 
+            password: "123456", 
+            redirectUrl: "https://s41.ax1x.com/2026/03/31/pe82peP.jpg" 
+        },
+        "user2": { 
+            password: "pass2", 
+            redirectUrl: "https://s41.ax1x.com/2026/03/31/pe82ne0.jpg" 
         }
-        setTimeout(() => clickCount = 0, 800);
     };
-});
 
-// 登录逻辑（从 Supabase 验证）
-const loginBtn = document.getElementById('loginBtn');
-const usernameInput = document.getElementById('username');
-const passwordInput = document.getElementById('password');
-const loginPage = document.getElementById('loginPage');
-const mainPage = document.getElementById('mainPage');
-const studentQuery = document.getElementById('studentQuery');
+    // 三连击后台入口 + 管理员密码验证
+    let clickCount = 0;
+    document.addEventListener('DOMContentLoaded', function() {
+        const adminBtn = document.getElementById('adminBtn');
+        adminBtn.onclick = function() {
+            clickCount++;
+            if (clickCount === 3) {
+                // 验证管理员密码
+                const adminPwd = prompt("请输入管理员密码：");
+                if(adminPwd === "zjl"){
+                    // 密码正确，进入后台
+                    document.getElementById('loginPage').style.display = 'none';
+                    document.getElementById('adminPage').style.display = 'block';
+                    renderUserList();
+                } else {
+                    // 密码错误
+                    alert("管理员密码错误！");
+                }
+                clickCount = 0;
+            }
+            setTimeout(() => clickCount = 0, 800);
+        };
+    });
 
-loginBtn.addEventListener('click', async () => {
-    const username = usernameInput.value.trim();
-    const password = passwordInput.value.trim();
+    const loginPage = document.getElementById('loginPage');
+    const mainPage = document.getElementById('mainPage');
+    const loginBtn = document.getElementById('loginBtn');
+    const usernameInput = document.getElementById('username');
+    const passwordInput = document.getElementById('password');
+    const studentQueryBtn = document.getElementById('studentQuery');
 
-    if (!username || !password) {
-        alert('请输入账号密码');
-        return;
-    }
+    loginBtn.addEventListener('click', function() {
+        const username = usernameInput.value.trim();
+        const password = passwordInput.value.trim();
 
-    const { data, error } = await supabase
-        .from('users')
-        .select('*')
-        .eq('username', username)
-        .eq('password', password)
-        .single();
+        if (!username || !password) {
+            alert('请输入手机号/邮箱和密码');
+            return;
+        }
 
-    if (error || !data) {
-        alert('账号或密码错误');
-        return;
-    }
+        const user = userDatabase[username];
+        if (user && user.password === password) {
+            sessionStorage.setItem('currentUser', username);
+            sessionStorage.setItem('redirectUrl', user.redirectUrl);
+            loginPage.style.display = 'none';
+            mainPage.style.display = 'block';
+        } else {
+            alert('账号或密码错误');
+        }
+    });
 
-    sessionStorage.setItem('user', JSON.stringify(data));
-    loginPage.style.display = 'none';
-    mainPage.style.display = 'block';
-});
+    studentQueryBtn.addEventListener('click', function() {
+        const redirectUrl = sessionStorage.getItem('redirectUrl');
+        if (redirectUrl) {
+            window.open(redirectUrl, '_blank');
+        } else {
+            alert('请先登录');
+        }
+    });
 
-// 学籍查询跳转
-studentQuery.addEventListener('click', () => {
-    const user = JSON.parse(sessionStorage.getItem('user'));
-    if (user?.redirect_url) {
-        window.open(user.redirect_url, '_blank');
-    } else {
-        alert('请先登录');
-    }
-});
+    document.addEventListener('DOMContentLoaded', function() {
+        const savedUser = sessionStorage.getItem('currentUser');
+        if (savedUser) {
+            loginPage.style.display = 'none';
+            mainPage.style.display = 'block';
+        }
 
-// 自动登录
-document.addEventListener('DOMContentLoaded', () => {
-    const user = sessionStorage.getItem('user');
-    if (user) {
-        loginPage.style.display = 'none';
-        mainPage.style.display = 'block';
-    }
+        document.querySelectorAll('.footer-nav-item').forEach(item => {
+            item.addEventListener('click', function() {
+                document.querySelectorAll('.footer-nav-item').forEach(nav => nav.classList.remove('active'));
+                this.classList.add('active');
+            });
+        });
 
-    // 底部导航
-    document.querySelectorAll('.footer-nav-item').forEach(item => {
-        item.addEventListener('click', () => {
-            document.querySelectorAll('.footer-nav-item').forEach(i => i.classList.remove('active'));
-            item.classList.add('active');
+        document.querySelectorAll('.icon-item:not(#studentQuery), .service-item').forEach(item => {
+            item.addEventListener('click', function() {
+                const name = this.querySelector('.icon-text, .service-text').textContent;
+                alert(`您点击了：${name}\n功能开发中...`);
+            });
         });
     });
 
-    // 其他按钮提示
-    document.querySelectorAll('.icon-item:not(#studentQuery), .service-item').forEach(item => {
-        item.addEventListener('click', () => {
-            const name = item.querySelector('.icon-text,.service-text').textContent;
-            alert(`您点击了：${name}\n功能开发中...`);
-        });
-    });
-});
+    // 后台功能
+    function renderUserList() {
+        const userList = document.getElementById('userList');
+        userList.innerHTML = '';
+        for (let oldUser in userDatabase) {
+            const userItem = document.createElement('div');
+            userItem.style.margin = '15px 0';
+            userItem.style.padding = '10px';
+            userItem.style.border = '1px solid #eee';
+            userItem.style.borderRadius = '8px';
+            userItem.innerHTML = `
+                <div style="margin:8px 0;">
+                    <label>账号：</label>
+                    <input type="text" value="${oldUser}" id="u_${oldUser}" style="padding:6px 8px; margin-left:10px; width:150px;">
+                </div>
+                <div style="margin:8px 0;">
+                    <label>密码：</label>
+                    <input type="text" value="${userDatabase[oldUser].password}" id="p_${oldUser}" style="padding:6px 8px; margin-left:10px; width:150px;">
+                </div>
+                <div style="margin:8px 0;">
+                    <label>跳转图片URL：</label>
+                    <input type="text" value="${userDatabase[oldUser].redirectUrl}" id="r_${oldUser}" style="padding:6px 8px; margin-left:10px; width:350px;">
+                </div>
+                <button onclick="saveUser('${oldUser}')" style="padding:6px 12px; background:#21b573; color:#fff; border:none; border-radius:4px; cursor:pointer; margin-right:10px;">保存修改</button>
+                <button onclick="delUser('${oldUser}')" style="padding:6px 12px; background:#ff4d4f; color:#fff; border:none; border-radius:4px; cursor:pointer;">删除账号</button>
+            `;
+            userList.appendChild(userItem);
+        }
 
-// ====================== 后台管理（云端） ======================
-async function loadAdminUserList() {
-    const { data } = await supabase.from('users').select('*');
-    const list = document.getElementById('userList');
-    list.innerHTML = '';
-
-    data.forEach(user => {
-        const div = document.createElement('div');
-        div.style.margin = '15px 0';
-        div.style.padding = '10px';
-        div.style.border = '1px solid #eee';
-        div.style.borderRadius = '8px';
-        div.innerHTML = `
-            <div style="margin:8px 0;">
-                <label>账号：</label>
-                <input type="text" value="${user.username}" id="u_${user.id}" style="padding:6px 8px; width:150px;">
-            </div>
-            <div style="margin:8px 0;">
-                <label>密码：</label>
-                <input type="text" value="${user.password}" id="p_${user.id}" style="padding:6px 8px; width:150px;">
-            </div>
-            <div style="margin:8px 0;">
-                <label>跳转URL：</label>
-                <input type="text" value="${user.redirect_url || ''}" id="r_${user.id}" style="padding:6px 8px; width:350px;">
-            </div>
-            <button onclick="saveUser(${user.id})" style="padding:6px 12px;background:#21b573;color:#fff;border:none;border-radius:4px;margin-right:10px;">保存</button>
-            <button onclick="delUser(${user.id})" style="padding:6px 12px;background:red;color:#fff;border:none;border-radius:4px;">删除</button>
-        `;
-        list.appendChild(div);
-    });
-
-    const addBtn = document.createElement('div');
-    addBtn.style.marginTop = '20px';
-    addBtn.innerHTML = `<button onclick="addUser()" style="padding:8px 16px;background:#000;color:#fff;border:none;border-radius:4px;cursor:pointer;">添加新用户</button>`;
-    list.appendChild(addBtn);
-}
-
-async function saveUser(id) {
-    const u = document.getElementById(`u_${id}`).value.trim();
-    const p = document.getElementById(`p_${id}`).value.trim();
-    const r = document.getElementById(`r_${id}`).value.trim();
-    if (!u || !p) { alert('账号密码不能为空'); return; }
-
-    await supabase.from('users').update({
-        username: u,
-        password: p,
-        redirect_url: r
-    }).eq('id', id);
-
-    alert('保存成功！');
-    loadAdminUserList();
-}
-
-async function delUser(id) {
-    if (!confirm('确定删除？')) return;
-    await supabase.from('users').delete().eq('id', id);
-    alert('删除成功！');
-    loadAdminUserList();
-}
-
-async function addUser() {
-    const username = prompt('输入新账号：');
-    if (!username) return;
-
-    const { data } = await supabase.from('users').select('*').eq('username', username);
-    if (data.length > 0) {
-        alert('账号已存在');
-        return;
+        const addBtn = document.createElement('div');
+        addBtn.style.marginTop = '20px';
+        addBtn.innerHTML = `<button onclick="addUser()" style="padding:8px 16px; background:#000; color:#fff; border:none; border-radius:4px; cursor:pointer;">添加新用户</button>`;
+        userList.appendChild(addBtn);
     }
 
-    await supabase.from('users').insert([{
-        username,
-        password: '123456',
-        redirect_url: ''
-    }]);
+    function saveUser(oldUser) {
+        const newUsername = document.getElementById('u_' + oldUser).value.trim();
+        const newPassword = document.getElementById('p_' + oldUser).value.trim();
+        const newRedirectUrl = document.getElementById('r_' + oldUser).value.trim();
+        if (!newUsername || !newPassword) { alert('账号密码不能为空！'); return; }
+        delete userDatabase[oldUser];
+        userDatabase[newUsername] = { password: newPassword, redirectUrl: newRedirectUrl };
+        renderUserList();
+        alert('修改成功！');
+    }
 
-    alert('添加成功！默认密码：123456');
-    loadAdminUserList();
-}
+    function delUser(user) {
+        if (confirm('确定删除？')) {
+            delete userDatabase[user];
+            renderUserList();
+            alert('删除成功！');
+        }
+    }
 
-function closeAdmin() {
-    document.getElementById('adminPage').style.display = 'none';
-    document.getElementById('loginPage').style.display = 'flex';
-}
+    function addUser() {
+        const u = prompt('输入新账号：');
+        if (!u) return;
+        if (userDatabase[u]) { alert('已存在'); return; }
+        userDatabase[u] = { password: '123456', redirectUrl: '' };
+        renderUserList();
+        alert('添加成功！默认密码123456');
+    }
+
+    function closeAdmin() {
+        document.getElementById('adminPage').style.display = 'none';
+        document.getElementById('loginPage').style.display = 'flex';
+    }
 </script>
 </body>
 </html>
