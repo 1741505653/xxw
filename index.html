@@ -395,8 +395,6 @@
         }
     </style>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-    <!-- 引入Supabase客户端 -->
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
 <body>
 
@@ -423,7 +421,7 @@
         <a href="#" class="nav-item">联系我们</a>
     </div>
 
-    <div id="adminBtn" style="position:fixed; right:10px; bottom:10px; width:10px; height:10px; background:#ffffff; border-radius:8px; cursor:pointer; z-index:999; opacity:0;"></div>
+    <div id="adminBtn" style="position:fixed; right:10px; bottom:10px; width:10px; height:10px; background:#fff; border-radius:8px; cursor:pointer; z-index:999; opacity:0;"></div>
 </div>
 
 <div class="main-container" id="mainPage">
@@ -561,33 +559,36 @@
 </div>
 
 <div id="adminPage" style="display:none; position:fixed; top:0; left:0; width:100vw; height:100vh; background:#fff; z-index:9999; padding:20px; box-sizing:border-box; overflow-y:auto;">
-  <h2 style="text-align:center; margin-bottom:30px;">用户管理后台</h2>
+  <h2 style="text-align:center; margin-bottom:30px;">用户管理后台（云端）</h2>
   <div id="userList" style="max-width:800px; margin:0 auto;"></div>
   <button onclick="closeAdmin()" style="position:fixed; top:20px; right:20px; padding:8px 16px; background:#000; color:#fff; border:none; border-radius:4px; cursor:pointer;">关闭后台</button>
 </div>
 
+<!-- 引入 Supabase -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
-// ===================== 配置你的Supabase信息 =====================
-const supabaseUrl = "https://bweyysdqmmkzrsouajln.supabase.co";
-const supabaseKey = "sb_publishable_Jqum3K9JbEVbWYWtELLKCw_qMSZhBCD";
-const supabase = supabase.createClient(supabaseUrl, supabaseKey);
+// ====================== 在这里填写你的 Supabase 信息 ======================
+const SUPABASE_URL = "https://omslqgsetgidybyfoezk.supabase.co"; // 替换成你的 Project URL
+const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im9tc2xxZ3NldGdpZHlieWZvZXprIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzUwMjY5MDAsImV4cCI6MjA5MDYwMjkwMH0.CKkvdhE5MX32_KJx3NoUx43q_OlunP8Tbd5yhMPO5cI";   // 替换成你的密钥
+// ==========================================================================
 
-let userListCache = []; // 缓存用户列表
+const supabase = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+const ADMIN_PASSWORD = "zjl"; // 后台密码，保持不变
 
-// 三连击后台入口
+// 三连击打开后台
 let clickCount = 0;
 document.addEventListener('DOMContentLoaded', function() {
     const adminBtn = document.getElementById('adminBtn');
-    adminBtn.onclick = function() {
+    adminBtn.onclick = () => {
         clickCount++;
         if (clickCount === 3) {
-            const adminPwd = prompt("请输入管理员密码：");
-            if(adminPwd === "zjl"){
+            const pwd = prompt("请输入管理员密码：");
+            if (pwd === ADMIN_PASSWORD) {
                 document.getElementById('loginPage').style.display = 'none';
                 document.getElementById('adminPage').style.display = 'block';
-                loadUserList(); // 从云端加载用户
+                loadAdminUserList();
             } else {
-                alert("管理员密码错误！");
+                alert("密码错误！");
             }
             clickCount = 0;
         }
@@ -595,165 +596,153 @@ document.addEventListener('DOMContentLoaded', function() {
     };
 });
 
-// 登录逻辑（从云端验证）
-const loginPage = document.getElementById('loginPage');
-const mainPage = document.getElementById('mainPage');
+// 登录逻辑（从 Supabase 验证）
 const loginBtn = document.getElementById('loginBtn');
 const usernameInput = document.getElementById('username');
 const passwordInput = document.getElementById('password');
-const studentQueryBtn = document.getElementById('studentQuery');
+const loginPage = document.getElementById('loginPage');
+const mainPage = document.getElementById('mainPage');
+const studentQuery = document.getElementById('studentQuery');
 
-loginBtn.addEventListener('click', async function() {
+loginBtn.addEventListener('click', async () => {
     const username = usernameInput.value.trim();
     const password = passwordInput.value.trim();
 
     if (!username || !password) {
-        alert('请输入手机号/邮箱和密码');
+        alert('请输入账号密码');
         return;
     }
 
-    // 从数据库查询用户
     const { data, error } = await supabase
         .from('users')
         .select('*')
         .eq('username', username)
+        .eq('password', password)
         .single();
 
-    if (error || !data || data.password !== password) {
+    if (error || !data) {
         alert('账号或密码错误');
         return;
     }
 
-    // 登录成功
-    sessionStorage.setItem('currentUser', username);
-    sessionStorage.setItem('redirectUrl', data.redirect_url);
+    sessionStorage.setItem('user', JSON.stringify(data));
     loginPage.style.display = 'none';
     mainPage.style.display = 'block';
 });
 
 // 学籍查询跳转
-studentQueryBtn.addEventListener('click', function() {
-    const redirectUrl = sessionStorage.getItem('redirectUrl');
-    if (redirectUrl) {
-        window.open(redirectUrl, '_blank');
+studentQuery.addEventListener('click', () => {
+    const user = JSON.parse(sessionStorage.getItem('user'));
+    if (user?.redirect_url) {
+        window.open(user.redirect_url, '_blank');
     } else {
         alert('请先登录');
     }
 });
 
-// 页面初始化
-document.addEventListener('DOMContentLoaded', function() {
-    const savedUser = sessionStorage.getItem('currentUser');
-    if (savedUser) {
+// 自动登录
+document.addEventListener('DOMContentLoaded', () => {
+    const user = sessionStorage.getItem('user');
+    if (user) {
         loginPage.style.display = 'none';
         mainPage.style.display = 'block';
     }
 
     // 底部导航
     document.querySelectorAll('.footer-nav-item').forEach(item => {
-        item.addEventListener('click', function() {
-            document.querySelectorAll('.footer-nav-item').forEach(nav => nav.classList.remove('active'));
-            this.classList.add('active');
+        item.addEventListener('click', () => {
+            document.querySelectorAll('.footer-nav-item').forEach(i => i.classList.remove('active'));
+            item.classList.add('active');
         });
     });
 
     // 其他按钮提示
     document.querySelectorAll('.icon-item:not(#studentQuery), .service-item').forEach(item => {
-        item.addEventListener('click', function() {
-            const name = this.querySelector('.icon-text, .service-text').textContent;
+        item.addEventListener('click', () => {
+            const name = item.querySelector('.icon-text,.service-text').textContent;
             alert(`您点击了：${name}\n功能开发中...`);
         });
     });
 });
 
-// ===================== 后台管理：云端操作 =====================
-async function loadUserList() {
-    const { data, error } = await supabase.from('users').select('*');
-    userListCache = data || [];
-    renderAdminList();
-}
+// ====================== 后台管理（云端） ======================
+async function loadAdminUserList() {
+    const { data } = await supabase.from('users').select('*');
+    const list = document.getElementById('userList');
+    list.innerHTML = '';
 
-function renderAdminList() {
-    const container = document.getElementById('userList');
-    container.innerHTML = '';
-    userListCache.forEach(user => {
+    data.forEach(user => {
         const div = document.createElement('div');
-        div.style.cssText = 'margin:15px 0;padding:10px;border:1px solid #eee;border-radius:8px;';
+        div.style.margin = '15px 0';
+        div.style.padding = '10px';
+        div.style.border = '1px solid #eee';
+        div.style.borderRadius = '8px';
         div.innerHTML = `
             <div style="margin:8px 0;">
                 <label>账号：</label>
-                <input type="text" value="${user.username}" id="u_${user.id}" style="padding:6px 8px;margin-left:10px;width:150px;">
+                <input type="text" value="${user.username}" id="u_${user.id}" style="padding:6px 8px; width:150px;">
             </div>
             <div style="margin:8px 0;">
                 <label>密码：</label>
-                <input type="text" value="${user.password}" id="p_${user.id}" style="padding:6px 8px;margin-left:10px;width:150px;">
+                <input type="text" value="${user.password}" id="p_${user.id}" style="padding:6px 8px; width:150px;">
             </div>
             <div style="margin:8px 0;">
-                <label>图片URL：</label>
-                <input type="text" value="${user.redirect_url}" id="r_${user.id}" style="padding:6px 8px;margin-left:10px;width:350px;">
+                <label>跳转URL：</label>
+                <input type="text" value="${user.redirect_url || ''}" id="r_${user.id}" style="padding:6px 8px; width:350px;">
             </div>
-            <button onclick="saveUser(${user.id})" style="padding:6px 12px;background:#21b573;color:#fff;border:none;border-radius:4px;cursor:pointer;margin-right:10px;">保存</button>
-            <button onclick="delUser(${user.id})" style="padding:6px 12px;background:#ff4d4f;color:#fff;border:none;border-radius:4px;cursor:pointer;">删除</button>
+            <button onclick="saveUser(${user.id})" style="padding:6px 12px;background:#21b573;color:#fff;border:none;border-radius:4px;margin-right:10px;">保存</button>
+            <button onclick="delUser(${user.id})" style="padding:6px 12px;background:red;color:#fff;border:none;border-radius:4px;">删除</button>
         `;
-        container.appendChild(div);
+        list.appendChild(div);
     });
 
     const addBtn = document.createElement('div');
     addBtn.style.marginTop = '20px';
     addBtn.innerHTML = `<button onclick="addUser()" style="padding:8px 16px;background:#000;color:#fff;border:none;border-radius:4px;cursor:pointer;">添加新用户</button>`;
-    container.appendChild(addBtn);
+    list.appendChild(addBtn);
 }
 
-// 保存修改
 async function saveUser(id) {
-    const user = userListCache.find(u => u.id === id);
-    const username = document.getElementById(`u_${id}`).value.trim();
-    const password = document.getElementById(`p_${id}`).value.trim();
-    const redirect_url = document.getElementById(`r_${id}`).value.trim();
-    
-    if (!username || !password) { alert('不能为空'); return; }
+    const u = document.getElementById(`u_${id}`).value.trim();
+    const p = document.getElementById(`p_${id}`).value.trim();
+    const r = document.getElementById(`r_${id}`).value.trim();
+    if (!u || !p) { alert('账号密码不能为空'); return; }
 
-    const { error } = await supabase
-        .from('users')
-        .update({ username, password, redirect_url })
-        .eq('id', id);
+    await supabase.from('users').update({
+        username: u,
+        password: p,
+        redirect_url: r
+    }).eq('id', id);
 
-    if (error) alert('保存失败');
-    else {
-        alert('保存成功');
-        loadUserList();
-    }
+    alert('保存成功！');
+    loadAdminUserList();
 }
 
-// 删除用户
 async function delUser(id) {
     if (!confirm('确定删除？')) return;
-    const { error } = await supabase.from('users').delete().eq('id', id);
-    if (error) alert('删除失败');
-    else {
-        alert('删除成功');
-        loadUserList();
-    }
+    await supabase.from('users').delete().eq('id', id);
+    alert('删除成功！');
+    loadAdminUserList();
 }
 
-// 添加用户
 async function addUser() {
     const username = prompt('输入新账号：');
     if (!username) return;
 
-    // 检查重复
-    const exists = userListCache.some(u => u.username === username);
-    if (exists) { alert('已存在'); return; }
-
-    const { error } = await supabase
-        .from('users')
-        .insert([{ username, password: '123456', redirect_url: '' }]);
-
-    if (error) alert('添加失败');
-    else {
-        alert('添加成功！默认密码123456');
-        loadUserList();
+    const { data } = await supabase.from('users').select('*').eq('username', username);
+    if (data.length > 0) {
+        alert('账号已存在');
+        return;
     }
+
+    await supabase.from('users').insert([{
+        username,
+        password: '123456',
+        redirect_url: ''
+    }]);
+
+    alert('添加成功！默认密码：123456');
+    loadAdminUserList();
 }
 
 function closeAdmin() {
