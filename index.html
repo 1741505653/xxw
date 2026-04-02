@@ -2,7 +2,7 @@
 <html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>学信档案</title>
     <style>
         * {
@@ -12,11 +12,26 @@
             font-family: "PingFang SC", "Helvetica Neue", Arial, sans-serif;
         }
 
+        html, body {
+            width: 100%;
+            height: 100%;
+            overflow-x: hidden;
+            background: #fff;
+        }
+
+        /* 全局统一容器：所有设备都按手机宽度显示 */
+        .page-wrapper {
+            max-width: 480px;
+            margin: 0 auto;
+            width: 100%;
+            min-height: 100vh;
+            background: #fff;
+            position: relative;
+        }
+
         body {
-            background-color: #ffffff;
             color: #333;
             line-height: 1.6;
-            min-height: 100vh;
         }
 
         /* 登录页 */
@@ -27,6 +42,8 @@
             padding: 60px 20px 30px;
             min-height: 100vh;
             background: #ffffff;
+            position: relative;
+            padding-bottom: 80px; /* 给底部版权留出空间 */
         }
 
         .logo-wrap {
@@ -113,6 +130,18 @@
             color: #666;
             font-size: 18px;
             text-decoration: none;
+        }
+
+        /* 新增：底部版权信息样式 */
+        .copyright {
+            position: absolute;
+            bottom: 20px;
+            left: 0;
+            width: 100%;
+            text-align: center;
+            color: #999;
+            font-size: 14px;
+            line-height: 1.5;
         }
 
         /* 主页面 */
@@ -292,7 +321,7 @@
         }
         .exam-text {
             font-size: 20px;
-            color: #333;
+            return: #333;
             font-weight: 500;
         }
         .exam-img {
@@ -358,13 +387,16 @@
         .footer-nav {
             position: fixed;
             bottom: 0;
-            left: 0;
+            left: 50%;
+            transform: translateX(-50%);
             width: 100%;
+            max-width: 480px;
             background: #ffffff;
             display: flex;
             justify-content: space-around;
             padding: 10px 0;
             border-top: 1px solid #f0f0f0;
+            z-index: 10;
         }
         .footer-nav-item {
             display: flex;
@@ -382,12 +414,14 @@
             margin-bottom: 5px;
         }
 
-        /* ✅ 加载条页面（已替换为横向进度条） */
+        /* 加载条页面 */
         .loading-page {
             position: fixed;
             top: 0;
-            left: 0;
-            width: 100vw;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 100%;
+            max-width: 480px;
             height: 100vh;
             background: #fff;
             display: none;
@@ -405,7 +439,6 @@
             color: #21b573;
             margin-bottom: 20px;
         }
-        /* 进度条容器 */
         .progress-bar {
             width: 280px;
             height: 6px;
@@ -413,7 +446,6 @@
             border-radius: 3px;
             overflow: hidden;
         }
-        /* 进度条动画 */
         .progress-active {
             height: 100%;
             width: 0%;
@@ -444,175 +476,189 @@
 </head>
 <body>
 
-<!-- ✅ 加载条页面 -->
-<div class="loading-page" id="loadingPage">
-    <img src="https://s41.ax1x.com/2026/03/31/pe8RzUf.png" class="loading-logo">
-    <div class="loading-text">正在加载学信档案...</div>
-    <div class="progress-bar">
-        <div class="progress-active"></div>
+<div class="page-wrapper">
+    <!-- 加载条页面 -->
+    <div class="loading-page" id="loadingPage">
+        <img src="https://s41.ax1x.com/2026/03/31/pe8RzUf.png" class="loading-logo">
+        <div class="loading-text">正在加载学信档案...</div>
+        <div class="progress-bar">
+            <div class="progress-active"></div>
+        </div>
+    </div>
+
+    <!-- 登录页 -->
+    <div class="login-container" id="loginPage">
+        <div class="logo-wrap">
+            <img src="https://s41.ax1x.com/2026/03/31/pe8RzUf.png" alt="学信网logo" class="logo-img">
+            <span class="logo-text">学信档案</span>
+        </div>
+        <p class="login-desc">请使用 学信网账号 进行登录</p>
+        <div class="input-group">
+            <input type="text" id="username" placeholder="手机号/邮箱">
+        </div>
+        <div class="input-group">
+            <input type="password" id="password" placeholder="密码">
+        </div>
+        <button class="login-btn" id="loginBtn">登录</button>
+        <div class="login-links">
+            <a href="#">找回密码</a>
+            <a href="#">注册</a>
+        </div>
+        <div class="bottom-nav">
+            <a href="#" class="nav-item">首页</a>
+            <a href="#" class="nav-item">帮助中心</a>
+            <a href="#" class="nav-item">联系我们</a>
+        </div>
+
+        <!-- 新增：底部版权信息 -->
+        <div class="copyright">
+            Copyright © 2003-2026 学信网 All Rights Reserved
+        </div>
+
+        <div id="adminBtn" style="position:fixed; right:10px; bottom:40px; width:10px; height:10px; background:#ffffff; border-radius:8px; cursor:pointer; z-index:999; opacity:0;"></div>
+    </div>
+
+    <!-- 主页面 -->
+    <div class="main-container" id="mainPage">
+        <div class="main-header">
+            <h1>学信网</h1>
+            <i class="fas fa-expand qr-icon"></i>
+        </div>
+
+        <div class="section">
+            <div class="section-title">学籍学历学位</div>
+            <div class="icons-grid-4">
+                <div class="icon-item" id="studentQuery">
+                    <div class="icon-box icon-query">
+                        <div class="icon-inner">
+                            <img src="https://s41.ax1x.com/2026/03/31/pe8IAAI.png" style="width:40px; height:50px; object-fit:contain;">
+                        </div>
+                    </div>
+                    <div class="icon-text">学籍查询</div>
+                </div>
+                <div class="icon-item">
+                    <div class="icon-box icon-verify">
+                        <div class="icon-inner">
+                            <img src="https://pic1.imgdb.cn/item/69cb98885cfefdcff4aff8e4.png" style="width:40px; height:50px; object-fit:contain;">
+                        </div>
+                    </div>
+                    <div class="icon-text">学籍验证</div>
+                </div>
+                <div class="icon-item">
+                    <div class="icon-box icon-edu-query">
+                        <div class="icon-inner">
+                            <img src="https://pic1.imgdb.cn/item/69cb98885cfefdcff4aff8e9.png" style="width:40px; height:50px; object-fit:contain;">
+                        </div>
+                    </div>
+                    <div class="icon-text">学历查询</div>
+                </div>
+                <div class="icon-item">
+                    <div class="icon-box icon-edu-verify">
+                        <div class="icon-inner">
+                            <img src="https://pic1.imgdb.cn/item/69cb98885cfefdcff4aff8e5.png" style="width:40px; height:50px; object-fit:contain;">
+                        </div>
+                    </div>
+                    <div class="icon-text">学历验证</div>
+                </div>
+                <div class="icon-item">
+                    <div class="icon-box icon-edu-cert">
+                        <div class="icon-inner">
+                            <img src="https://pic1.imgdb.cn/item/69cb98885cfefdcff4aff8e2.png" style="width:40px; height:50px; object-fit:contain;">
+                        </div>
+                    </div>
+                    <div class="icon-text">学历认证</div>
+                </div>
+                <div class="icon-item">
+                    <div class="icon-box icon-degree-query">
+                        <div class="icon-inner">
+                            <img src="https://pic1.imgdb.cn/item/69cb98895cfefdcff4aff8eb.png" style="width:40px; height:100px; object-fit:contain;">
+                        </div>
+                    </div>
+                    <div class="icon-text">学位查询</div>
+                </div>
+                <div class="icon-item">
+                    <div class="icon-box icon-degree-verify">
+                        <div class="icon-inner">
+                            <img src="https://pic1.imgdb.cn/item/69cb9ad25cfefdcff4b0035d.png" style="width:40px; height:50px; object-fit:contain;">
+                        </div>
+                    </div>
+                    <div class="icon-text">学位验证</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="exam-banner" style="padding:0; background:none; display:block;">
+            <img src="https://s41.ax1x.com/2026/03/31/pe85U0A.png" style="width:110%; height:auto; border-radius:8px; display:block;">
+        </div>
+
+        <div class="section">
+            <div class="section-title">出国教育背景信息服务</div>
+            <div class="icons-grid-3">
+                <div class="service-item bg-lightblue">
+                    <div class="service-icon blue">
+                        <div class="inner">
+                            <img src="https://pic1.imgdb.cn/item/69cb9c8b5cfefdcff4b02cc0.png" style="width:40px; height:50px; object-fit:contain;">
+                        </div>
+                    </div>
+                    <div class="service-text">中等教育学历</div>
+                </div>
+                <div class="service-item bg-lightblue">
+                    <div class="service-icon blue">
+                        <div class="inner">
+                            <img src="https://pic1.imgdb.cn/item/69cb9c8b5cfefdcff4b02cc4.png" style="width:40px; height:50px; object-fit:contain;">
+                        </div>
+                    </div>
+                    <div class="service-text">高等教育成绩单</div>
+                </div>
+                <div class="service-item bg-lightblue">
+                    <div class="service-icon blue">
+                        <div class="inner">
+                            <img src="https://pic1.imgdb.cn/item/69cb9c8b5cfefdcff4b02cc2.png" style="width:40px; height:50px; object-fit:contain;">
+                        </div>
+                    </div>
+                    <div class="service-text">高考成绩单</div>
+                </div>
+                <div class="service-item bg-lightgreen">
+                    <div class="service-icon green">
+                        <div class="inner">
+                            <img src="https://pic1.imgdb.cn/item/69cb9c8b5cfefdcff4b02cc3.png" style="width:40px; height:50px; object-fit:contain;">
+                        </div>
+                    </div>
+                    <div class="service-text">中学成绩单</div>
+                </div>
+                <div class="service-item bg-lightorange">
+                    <div class="service-icon orange">
+                        <div class="inner">
+                            <img src="https://pic1.imgdb.cn/item/69cb9c8b5cfefdcff4b02cc1.png" style="width:40px; height:50px; object-fit:contain;">
+                        </div>
+                    </div>
+                    <div class="service-text">会考成绩单</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="footer-nav">
+            <div class="footer-nav-item active">
+                <i class="fas fa-home"></i>
+                <span>首页</span>
+            </div>
+            <div class="footer-nav-item">
+                <i class="fas fa-list-alt"></i>
+                <span>新闻</span>
+            </div>
+            <div class="footer-nav-item">
+                <i class="fas fa-user"></i>
+                <span>我的</span>
+            </div>
+        </div>
     </div>
 </div>
 
-<!-- 登录页 -->
-<div class="login-container" id="loginPage">
-    <div class="logo-wrap">
-        <img src="https://s41.ax1x.com/2026/03/31/pe8RzUf.png" alt="学信网logo" class="logo-img">
-        <span class="logo-text">学信档案</span>
-    </div>
-    <p class="login-desc">请使用 学信网账号 进行登录</p>
-    <div class="input-group">
-        <input type="text" id="username" placeholder="手机号/邮箱">
-    </div>
-    <div class="input-group">
-        <input type="password" id="password" placeholder="密码">
-    </div>
-    <button class="login-btn" id="loginBtn">登录</button>
-    <div class="login-links">
-        <a href="#">找回密码</a>
-        <a href="#">注册</a>
-    </div>
-    <div class="bottom-nav">
-        <a href="#" class="nav-item">首页</a>
-        <a href="#" class="nav-item">帮助中心</a>
-        <a href="#" class="nav-item">联系我们</a>
-    </div>
-
-    <div id="adminBtn" style="position:fixed; right:10px; bottom:10px; width:10px; height:10px; background:#ffffff; border-radius:8px; cursor:pointer; z-index:999; opacity:0;"></div>
-</div>
-
-<!-- 主页面 -->
-<div class="main-container" id="mainPage">
-    <div class="main-header">
-        <h1>学信网</h1>
-        <i class="fas fa-expand qr-icon"></i>
-    </div>
-
-    <div class="section">
-        <div class="section-title">学籍学历学位</div>
-        <div class="icons-grid-4">
-            <div class="icon-item" id="studentQuery">
-                <div class="icon-box icon-query">
-                    <div class="icon-inner">
-                        <img src="https://s41.ax1x.com/2026/03/31/pe8IAAI.png" style="width:40px; height:50px; object-fit:contain;">
-                    </div>
-                </div>
-                <div class="icon-text">学籍查询</div>
-            </div>
-            <div class="icon-item">
-                <div class="icon-box icon-verify">
-                    <div class="icon-inner">
-                        <img src="https://pic1.imgdb.cn/item/69cb98885cfefdcff4aff8e4.png" style="width:40px; height:50px; object-fit:contain;">
-                    </div>
-                </div>
-                <div class="icon-text">学籍验证</div>
-            </div>
-            <div class="icon-item">
-                <div class="icon-box icon-edu-query">
-                    <div class="icon-inner">
-                        <img src="https://pic1.imgdb.cn/item/69cb98885cfefdcff4aff8e9.png" style="width:40px; height:50px; object-fit:contain;">
-                    </div>
-                </div>
-                <div class="icon-text">学历查询</div>
-            </div>
-            <div class="icon-item">
-                <div class="icon-box icon-edu-verify">
-                    <div class="icon-inner">
-                        <img src="https://pic1.imgdb.cn/item/69cb98885cfefdcff4aff8e5.png" style="width:40px; height:50px; object-fit:contain;">
-                    </div>
-                </div>
-                <div class="icon-text">学历验证</div>
-            </div>
-            <div class="icon-item">
-                <div class="icon-box icon-edu-cert">
-                    <div class="icon-inner">
-                        <img src="https://pic1.imgdb.cn/item/69cb98885cfefdcff4aff8e2.png" style="width:40px; height:50px; object-fit:contain;">
-                    </div>
-                </div>
-                <div class="icon-text">学历认证</div>
-            </div>
-            <div class="icon-item">
-                <div class="icon-box icon-degree-query">
-                    <div class="icon-inner">
-                        <img src="https://pic1.imgdb.cn/item/69cb98895cfefdcff4aff8eb.png" style="width:40px; height:100px; object-fit:contain;">
-                    </div>
-                </div>
-                <div class="icon-text">学位查询</div>
-            </div>
-            <div class="icon-item">
-                <div class="icon-box icon-degree-verify">
-                    <div class="icon-inner">
-                        <img src="https://pic1.imgdb.cn/item/69cb9ad25cfefdcff4b0035d.png" style="width:40px; height:50px; object-fit:contain;">
-                    </div>
-                </div>
-                <div class="icon-text">学位验证</div>
-            </div>
-        </div>
-    </div>
-
-    <div class="exam-banner" style="padding:0; background:none; display:block;">
-        <img src="https://s41.ax1x.com/2026/03/31/pe85U0A.png" style="width:110%; height:auto; border-radius:8px; display:block;">
-    </div>
-
-    <div class="section">
-        <div class="section-title">出国教育背景信息服务</div>
-        <div class="icons-grid-3">
-            <div class="service-item bg-lightblue">
-                <div class="service-icon blue">
-                    <div class="inner">
-                        <img src="https://pic1.imgdb.cn/item/69cb9c8b5cfefdcff4b02cc0.png" style="width:40px; height:50px; object-fit:contain;">
-                    </div>
-                </div>
-                <div class="service-text">中等教育学历</div>
-            </div>
-            <div class="service-item bg-lightblue">
-                <div class="service-icon blue">
-                    <div class="inner">
-                        <img src="https://pic1.imgdb.cn/item/69cb9c8b5cfefdcff4b02cc4.png" style="width:40px; height:50px; object-fit:contain;">
-                    </div>
-                </div>
-                <div class="service-text">高等教育成绩单</div>
-            </div>
-            <div class="service-item bg-lightblue">
-                <div class="service-icon blue">
-                    <div class="inner">
-                        <img src="https://pic1.imgdb.cn/item/69cb9c8b5cfefdcff4b02cc2.png" style="width:40px; height:50px; object-fit:contain;">
-                    </div>
-                </div>
-                <div class="service-text">高考成绩单</div>
-            </div>
-            <div class="service-item bg-lightgreen">
-                <div class="service-icon green">
-                    <div class="inner">
-                        <img src="https://pic1.imgdb.cn/item/69cb9c8b5cfefdcff4b02cc3.png" style="width:40px; height:50px; object-fit:contain;">
-                    </div>
-                </div>
-                <div class="service-text">中学成绩单</div>
-            </div>
-            <div class="service-item bg-lightorange">
-                <div class="service-icon orange">
-                    <div class="inner">
-                        <img src="https://pic1.imgdb.cn/item/69cb9c8b5cfefdcff4b02cc1.png" style="width:40px; height:50px; object-fit:contain;">
-                    </div>
-                </div>
-                <div class="service-text">会考成绩单</div>
-            </div>
-        </div>
-    </div>
-
-    <div class="footer-nav">
-        <div class="footer-nav-item active">
-            <i class="fas fa-home"></i>
-            <span>首页</span>
-        </div>
-        <div class="footer-nav-item">
-            <i class="fas fa-list-alt"></i>
-            <span>新闻</span>
-        </div>
-        <div class="footer-nav-item">
-            <i class="fas fa-user"></i>
-            <span>我的</span>
-        </div>
-    </div>
+<!-- 学籍查询页面（第三界面，内置返回逻辑） -->
+<div id="studentPage" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:#fff; z-index:999;">
+    <img id="studentImg" style="width:100%; height:100%; object-fit:cover;">
+    <!-- 点击任意处返回主页 -->
+    <div onclick="goBack()" style="position:absolute; top:0; left:0; width:100%; height:100%;"></div>
 </div>
 
 <!-- 后台 -->
@@ -622,60 +668,6 @@
   <button onclick="closeAdmin()" style="position:fixed; top:20px; right:20px; padding:8px 16px; background:#000; color:#fff; border:none; border-radius:4px; cursor:pointer;">关闭后台</button>
 </div>
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-<!-- 用户数据用户数据用户数据用户数据用户数据用户数据用户数据用户数据用户数据用户数据用户数据用户数据用户数据用户数据用户数据用户数据用户数据用户数据用户数据用户数据用户数据 -->
-<!-- 用户数据用户数据用户数据用户数据用户数据用户数据用户数据用户数据用户数据用户数据用户数据用户数据用户数据用户数据用户数据用户数据用户数据用户数据用户数据用户数据用户数据 -->
-<!-- 用户数据用户数据用户数据用户数据用户数据用户数据用户数据用户数据用户数据用户数据用户数据用户数据用户数据用户数据用户数据用户数据用户数据用户数据用户数据用户数据用户数据 -->
- <!-- 用户数据用户数据用户数据用户数据用户数据用户数据用户数据用户数据用户数据用户数据用户数据用户数据用户数据用户数据用户数据用户数据用户数据用户数据用户数据用户数据用户数据 -->
 <script>
     const userDatabase = {
         "13603846915": { 
@@ -705,31 +697,17 @@
         "he19173551928": { 
             password: "123456", 
             redirectUrl: "https://pic1.imgdb.cn/item/69cdba3d5a6f8fe2e6cbbc98.jpg" 
+        },
+        "13205687359": { 
+            password: "du123456", 
+            redirectUrl: "https://pic1.imgdb.cn/item/69ce0f46e22aad8a0c6469e1.jpg" 
+        },
+        "h13205687358": { 
+            password: "yu123456", 
+            redirectUrl: "https://pic1.imgdb.cn/item/69ce0f45e22aad8a0c6469dc.jpg" 
         }
     };
 
-
-
-
-// <!-- 用户数据用户数据用户数据用户数据用户数据用户数据用户数据用户数据用户数据用户数据用户数据用户数据用户数据用户数据用户数据用户数据用户数据用户数据用户数据用户数据用户数据 -->
-// <!-- 用户数据用户数据用户数据用户数据用户数据用户数据用户数据用户数据用户数据用户数据用户数据用户数据用户数据用户数据用户数据用户数据用户数据用户数据用户数据用户数据用户数据 -->
-// <!-- 用户数据用户数据用户数据用户数据用户数据用户数据用户数据用户数据用户数据用户数据用户数据用户数据用户数据用户数据用户数据用户数据用户数据用户数据用户数据用户数据用户数据 -->
-// <!-- 用户数据用户数据用户数据用户数据用户数据用户数据用户数据用户数据用户数据用户数据用户数据用户数据用户数据用户数据用户数据用户数据用户数据用户数据用户数据用户数据用户数据 -->
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-    
     let clickCount = 0;
     document.addEventListener('DOMContentLoaded', function() {
         const adminBtn = document.getElementById('adminBtn');
@@ -757,8 +735,10 @@
     const usernameInput = document.getElementById('username');
     const passwordInput = document.getElementById('password');
     const studentQueryBtn = document.getElementById('studentQuery');
+    const studentPage = document.getElementById('studentPage');
+    const studentImg = document.getElementById('studentImg');
 
-    // 登录逻辑：加载条2秒后跳转
+    // 登录逻辑
     loginBtn.addEventListener('click', function() {
         const username = usernameInput.value.trim();
         const password = passwordInput.value.trim();
@@ -773,11 +753,9 @@
             sessionStorage.setItem('currentUser', username);
             sessionStorage.setItem('redirectUrl', user.redirectUrl);
             
-            // 显示加载页
             loginPage.style.display = 'none';
             loadingPage.style.display = 'flex';
             
-            // 2秒后跳主页
             setTimeout(() => {
                 loadingPage.style.display = 'none';
                 mainPage.style.display = 'block';
@@ -788,37 +766,32 @@
         }
     });
 
-    // 学籍查询（可滑动伪装页）
+    // 学籍查询：打开内置页面（支持返回）
     studentQueryBtn.addEventListener('click', function() {
         const redirectUrl = sessionStorage.getItem('redirectUrl');
         if (redirectUrl) {
-            const fakePage = window.open('', '_blank');
-            fakePage.document.write(`
-                <!DOCTYPE html>
-                <html>
-                <head>
-                    <title>学信档案</title>
-                    <meta charset="utf-8">
-                    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-                    <style>
-                        *{margin:0;padding:0;box-sizing:border-box;}
-                        body{background:#fff;}
-                        img{width:100%;display:block;}
-                    </style>
-                </head>
-                <body>
-                    <img src="${redirectUrl}" />
-                </body>
-                </html>
-            `);
-            fakePage.document.close();
-            if (history.replaceState) {
-                history.replaceState(null, "学信档案", "/xueda.html");
-            }
+            studentImg.src = redirectUrl;
+            mainPage.style.display = 'none';
+            studentPage.style.display = 'block';
+            // 压入历史记录，支持返回键
+            history.pushState({page: 'student'}, null, '');
         } else {
             alert('请先登录');
         }
     });
+
+    // 返回主页
+    function goBack() {
+        studentPage.style.display = 'none';
+        mainPage.style.display = 'block';
+    }
+
+    // 监听手机返回键
+    window.onpopstate = function(e) {
+        if (studentPage.style.display === 'block') {
+            goBack();
+        }
+    };
 
     document.addEventListener('DOMContentLoaded', function() {
         const savedUser = sessionStorage.getItem('currentUser');
@@ -842,7 +815,6 @@
         });
     });
 
-    // 后台功能
     function renderUserList() {
         const userList = document.getElementById('userList');
         userList.innerHTML = '';
