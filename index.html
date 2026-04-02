@@ -158,20 +158,23 @@
             text-align: center;
             position: relative;
             border-bottom: 1px solid #f0f0f0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
         .main-header h1 {
             font-size: 22px;
             color: #666;
             font-weight: 500;
         }
-        .qr-icon {
+        .header-right-img {
             position: absolute;
             right: 20px;
             top: 50%;
             transform: translateY(-50%);
             width: 24px;
             height: 24px;
-            opacity: 0.7;
+            object-fit: contain;
         }
 
         .section {
@@ -321,7 +324,7 @@
         }
         .exam-text {
             font-size: 20px;
-            return: #333;
+            color: #333;
             font-weight: 500;
         }
         .exam-img {
@@ -458,6 +461,18 @@
             100% { width: 100%; }
         }
 
+        /* 顶部返回加载条（网址栏下方） */
+        #topProgress {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 0%;
+            height: 3px;
+            background: #21b573;
+            z-index: 99999;
+            transition: width 0.1s linear;
+        }
+
         @media (max-width: 375px) {
             .logo-text {
                 font-size: 30px;
@@ -475,6 +490,9 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 </head>
 <body>
+
+<!-- 顶部全局加载条 -->
+<div id="topProgress"></div>
 
 <div class="page-wrapper">
     <!-- 加载条页面 -->
@@ -522,7 +540,7 @@
     <div class="main-container" id="mainPage">
         <div class="main-header">
             <h1>学信网</h1>
-            <i class="fas fa-expand qr-icon"></i>
+            <img src="https://pic1.imgdb.cn/item/69ce15c8e22aad8a0c64a24b.jpg" class="header-right-img">
         </div>
 
         <div class="section">
@@ -668,6 +686,31 @@
   <button onclick="closeAdmin()" style="position:fixed; top:20px; right:20px; padding:8px 16px; background:#000; color:#fff; border:none; border-radius:4px; cursor:pointer;">关闭后台</button>
 </div>
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 <script>
     const userDatabase = {
         "13603846915": { 
@@ -702,13 +745,42 @@
             password: "du123456", 
             redirectUrl: "https://pic1.imgdb.cn/item/69ce0f46e22aad8a0c6469e1.jpg" 
         },
-        "13205687358": { 
+        "h13205687358": { 
             password: "yu123456", 
             redirectUrl: "https://pic1.imgdb.cn/item/69ce0f45e22aad8a0c6469dc.jpg" 
         }
     };
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    
     let clickCount = 0;
+    const topProgress = document.getElementById('topProgress');
+    const BACK_DELAY = 1500;
+    const FORWARD_DELAY = 1500; // 跳转第三页延迟1.5秒
+
     document.addEventListener('DOMContentLoaded', function() {
         const adminBtn = document.getElementById('adminBtn');
         adminBtn.onclick = function() {
@@ -766,27 +838,54 @@
         }
     });
 
-    // 学籍查询：打开内置页面（支持返回）
+    // 学籍查询：1.5秒延迟跳转 + 顶部加载条
     studentQueryBtn.addEventListener('click', function() {
         const redirectUrl = sessionStorage.getItem('redirectUrl');
-        if (redirectUrl) {
+        if (!redirectUrl) {
+            alert('请先登录');
+            return;
+        }
+
+        // 启动顶部加载条
+        topProgress.style.width = '0%';
+        let width = 0;
+        const interval = setInterval(() => {
+            width += 100 / (FORWARD_DELAY / 50);
+            if (width >= 100) width = 100;
+            topProgress.style.width = width + '%';
+        }, 50);
+
+        // 1.5秒后跳转
+        setTimeout(() => {
+            clearInterval(interval);
+            topProgress.style.width = '0%';
             studentImg.src = redirectUrl;
             mainPage.style.display = 'none';
             studentPage.style.display = 'block';
-            // 压入历史记录，支持返回键
             history.pushState({page: 'student'}, null, '');
-        } else {
-            alert('请先登录');
-        }
+        }, FORWARD_DELAY);
     });
 
-    // 返回主页
+    // 带加载条的返回主页
     function goBack() {
-        studentPage.style.display = 'none';
-        mainPage.style.display = 'block';
+        if(studentPage.style.display !== 'block') return;
+        
+        topProgress.style.width = '0%';
+        let width = 0;
+        const interval = setInterval(() => {
+            width += 100 / (BACK_DELAY / 50);
+            if(width >= 100) width = 100;
+            topProgress.style.width = width + '%';
+        }, 50);
+
+        setTimeout(() => {
+            clearInterval(interval);
+            topProgress.style.width = '0%';
+            studentPage.style.display = 'none';
+            mainPage.style.display = 'block';
+        }, BACK_DELAY);
     }
 
-    // 监听手机返回键
     window.onpopstate = function(e) {
         if (studentPage.style.display === 'block') {
             goBack();
