@@ -1,235 +1,297 @@
-<!DOCTYPE html>
-<html lang="zh-CN">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>学信档案</title>
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: "PingFang SC", "Helvetica Neue", Arial, sans-serif;
+<!DOCTYPE html> <!-- 声明文档类型为 HTML5 -->
+<html lang="zh-CN"> <!-- HTML 根元素，语言设置为简体中文 -->
+
+<head> <!-- 头部区域，存放元信息和样式 -->
+    <meta charset="UTF-8"> <!-- 设置字符编码为 UTF-8 -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"> <!-- 移动端适配设置 -->
+    <title>学信档案</title> <!-- 浏览器标签页标题 -->
+
+    <style> /* 页面样式开始 */
+
+        ▪ { /* 这是一个无效选择器，可能是误写，浏览器会忽略 */
+
+            margin: 0; /* 清除外边距 */
+            padding: 0; /* 清除内边距 */
+            box-sizing: border-box; /* 盒模型设为 border-box */
+            font-family: "PingFang SC", "Helvetica Neue", Arial, sans-serif; /* 设置字体族 */
         }
 
-        html, body {
-            width: 100%;
-            height: 100%;
-            overflow-x: hidden;
-            background: #fff;
+        html, body { /* 针对 html 和 body 元素 */
+            width: 100%; /* 宽度占满 */
+            height: 100%; /* 高度占满 */
+            overflow-x: hidden; /* 禁止横向滚动 */
+            background: #f5f5f5; /* 页面背景色 */
         }
 
         /* 全局统一容器：所有设备都按手机宽度显示 */
-        .page-wrapper {
-            max-width: 480px;
-            margin: 0 auto;
-            width: 100%;
-            min-height: 100vh;
-            background: #fff;
-            position: relative;
+        .page-wrapper { /* 页面整体包裹容器 */
+            max-width: 480px; /* 最大宽度，模拟手机 */
+            margin: 0 auto; /* 水平居中 */
+            width: 100%; /* 宽度自适应 */
+            min-height: 100vh; /* 最小高度为视口高度 */
+            background: #f5f5f5; /* 背景色 */
+            position: relative; /* 相对定位 */
         }
 
-        body {
-            color: #333;
-            line-height: 1.6;
+        /* 顶部页面跳转加载条 */
+        #pageLoader { /* 页面切换时的顶部进度条 */
+            position: fixed; /* 固定定位 */
+            top: 0; /* 顶部 */
+            left: 0; /* 左侧 */
+            width: 0%; /* 初始宽度为 0 */
+            height: 3px; /* 高度 */
+            background: #2196F3; /* 蓝色 */
+            z-index: 99999; /* 层级最高 */
+            transition: width 0.3s ease; /* 宽度变化动画 */
+        }
+
+        /* 加载条页面 */
+        .loading-page { /* 全屏加载页面 */
+            position: fixed; /* 固定定位 */
+            top: 0; /* 顶部 */
+            left: 50%; /* 水平居中 */
+            transform: translateX(-50%); /* 精确居中 */
+            width: 100%; /* 宽度 */
+            max-width: 480px; /* 最大宽度 */
+            height: 100vh; /* 视口高度 */
+            background: #fff; /* 背景白色 */
+            display: none; /* 默认隐藏 */
+            flex-direction: column; /* 纵向排列 */
+            align-items: center; /* 水平居中 */
+            justify-content: center; /* 垂直居中 */
+            z-index: 9999; /* 高层级 */
+        }
+        .loading-logo { /* 加载页 Logo */
+            width: 120px; /* 宽度 */
+            margin-bottom: 40px; /* 下外边距 */
+        }
+        .loading-text { /* 加载文字 */
+            font-size: 18px; /* 字号 */
+            color: #21b573; /* 绿色 */
+            margin-bottom: 20px; /* 下边距 */
+        }
+        .progress-bar { /* 进度条外层 */
+            width: 280px; /* 宽度 */
+            height: 6px; /* 高度 */
+            background: #f0f0f0; /* 背景灰 */
+            border-radius: 3px; /* 圆角 */
+            overflow: hidden; /* 超出隐藏 */
+        }
+        .progress-active { /* 动态进度条 */
+            height: 100%; /* 高度铺满 */
+            width: 0%; /* 初始宽度 */
+            background: #21b573; /* 绿色 */
+            border-radius: 3px; /* 圆角 */
+            animation: progress 2s linear forwards; /* 动画 */
+        }
+        @keyframes progress { /* 进度条动画定义 */
+            0% { width: 0%; } /* 起始 */
+            100% { width: 100%; } /* 结束 */
         }
 
         /* 登录页 */
-        .login-container {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            padding: 60px 20px 30px;
-            min-height: 100vh;
-            background: #ffffff;
-            position: relative;
-            padding-bottom: 80px; /* 给底部版权留出空间 */
+        .login-container { /* 登录页容器 */
+            display: flex; /* 弹性布局 */
+            flex-direction: column; /* 纵向排列 */
+            align-items: center; /* 水平居中 */
+            padding: 60px 20px 30px; /* 内边距 */
+            min-height: 100vh; /* 至少一屏高 */
+            background: #ffffff; /* 白色背景 */
+            position: relative; /* 相对定位 */
+            padding-bottom: 80px; /* 底部留白 */
         }
 
-        .logo-wrap {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin-bottom: 30px;
+        .logo-wrap { /* Logo 区域 */
+            display: flex; /* 弹性布局 */
+            align-items: center; /* 垂直居中 */
+            justify-content: center; /* 水平居中 */
+            margin-bottom: 30px; /* 下边距 */
         }
-        .logo-img {
-            width: 120px;
-            height: 60px;
-            margin-right: 12px;
+        .logo-img { /* Logo 图片 */
+            width: 120px; /* 宽 */
+            height: 60px; /* 高 */
+            margin-right: 12px; /* 右间距 */
         }
-        .logo-text {
-            font-size: 36px;
-            color: #403737;
-            font-weight: bold;
-            font-family: 楷体;
-        }
-
-        .login-desc {
-            text-align: center;
-            color: #999;
-            font-size: 18px;
-            margin-bottom: 30px;
+        .logo-text { /* Logo 文字 */
+            font-size: 36px; /* 字号 */
+            color: #403737; /* 深灰 */
+            font-weight: bold; /* 加粗 */
+            font-family: 楷体; /* 楷体 */
         }
 
-        .input-group {
-            width: 100%;
-            max-width: 500px;
-            margin-bottom: 20px;
-        }
-        .input-group input {
-            width: 100%;
-            padding: 18px 20px;
-            border: 1px solid #ddd;
-            border-radius: 8px;
-            font-size: 18px;
-            color: #333;
-            background: #fff;
-        }
-        .input-group input::placeholder {
-            color: #999;
-        }
-        .input-group input:focus {
-            outline: none;
-            border-color: #21b573;
+        .login-desc { /* 登录提示文字 */
+            text-align: center; /* 居中 */
+            color: #999; /* 浅灰 */
+            font-size: 18px; /* 字号 */
+            margin-bottom: 30px; /* 下边距 */
         }
 
-        .login-btn {
-            width: 100%;
-            max-width: 500px;
-            padding: 18px;
-            background-color: #21b573;
-            color: #fff;
-            border: none;
-            border-radius: 8px;
-            font-size: 20px;
-            font-weight: bold;
-            cursor: pointer;
-            margin-top: 10px;
+        .input-group { /* 输入框组 */
+            width: 100%; /* 宽度 */
+            max-width: 500px; /* 最大宽 */
+            margin-bottom: 20px; /* 下边距 */
+        }
+        .input-group input { /* 输入框样式 */
+            width: 100%; /* 满宽 */
+            padding: 18px 20px; /* 内边距 */
+            border: 1px solid #ddd; /* 边框 */
+            border-radius: 8px; /* 圆角 */
+            font-size: 18px; /* 字号 */
+            color: #333; /* 文字颜色 */
+            background: #fff; /* 背景 */
+        }
+        .input-group input::placeholder { /* 占位符样式 */
+            color: #999; /* 浅灰 */
+        }
+        .input-group input:focus { /* 获得焦点时 */
+            outline: none; /* 去掉默认轮廓 */
+            border-color: #21b573; /* 边框变绿 */
         }
 
-        .login-links {
-            width: 100%;
-            max-width: 500px;
-            display: flex;
-            justify-content: space-between;
-            margin-top: 25px;
-        }
-        .login-links a {
-            color: #666;
-            font-size: 16px;
-            text-decoration: none;
-        }
-
-        .bottom-nav {
-            display: flex;
-            justify-content: center;
-            margin-top: 80px;
-            gap: 40px;
-        }
-        .nav-item {
-            color: #666;
-            font-size: 18px;
-            text-decoration: none;
+        .login-btn { /* 登录按钮 */
+            width: 100%; /* 满宽 */
+            max-width: 500px; /* 最大宽 */
+            padding: 18px; /* 内边距 */
+            background-color: #21b573; /* 绿色背景 */
+            color: #fff; /* 白字 */
+            border: none; /* 无边框 */
+            border-radius: 8px; /* 圆角 */
+            font-size: 20px; /* 字号 */
+            font-weight: bold; /* 加粗 */
+            cursor: pointer; /* 手型 */
+            margin-top: 10px; /* 上边距 */
         }
 
-        /* 新增：底部版权信息样式 */
-        .copyright {
-            position: absolute;
-            bottom: 20px;
-            left: 0;
-            width: 100%;
-            text-align: center;
-            color: #999;
-            font-size: 14px;
-            line-height: 1.5;
+        .login-links { /* 登录页链接区 */
+            width: 100%; /* 满宽 */
+            max-width: 500px; /* 最大宽 */
+            display: flex; /* 弹性布局 */
+            justify-content: space-between; /* 两端对齐 */
+            margin-top: 25px; /* 上边距 */
+        }
+        .login-links a { /* 链接样式 */
+            color: #666; /* 灰色 */
+            font-size: 16px; /* 字号 */
+            text-decoration: none; /* 无下划线 */
         }
 
-        /* 主页面 */
-        .main-container {
-            display: none;
-            min-height: 100vh;
-            background: #f8f9fa;
-            padding-bottom: 70px;
+        .bottom-nav { /* 底部导航 */
+            display: flex; /* 弹性布局 */
+            justify-content: center; /* 居中 */
+            margin-top: 80px; /* 上边距 */
+            gap: 40px; /* 间距 */
+        }
+        .nav-item { /* 导航项 */
+            color: #666; /* 灰色 */
+            font-size: 18px; /* 字号 */
+            text-decoration: none; /* 无下划线 */
         }
 
-        .main-header {
-            background: #ffffff;
-            padding: 15px 20px;
-            text-align: center;
-            position: relative;
-            border-bottom: 1px solid #f0f0f0;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-        .main-header h1 {
-            font-size: 22px;
-            color: #666;
-            font-weight: 500;
-        }
-        .header-right-img {
-            position: absolute;
-            right: 20px;
-            top: 50%;
-            transform: translateY(-50%);
-            width: 24px;
-            height: 24px;
-            object-fit: contain;
+        /* 底部版权信息样式 */
+        .copyright { /* 版权信息 */
+            position: absolute; /* 绝对定位 */
+            bottom: 20px; /* 距底 */
+            left: 0; /* 左对齐 */
+            width: 100%; /* 满宽 */
+            text-align: center; /* 居中 */
+            color: #999; /* 浅灰 */
+            font-size: 14px; /* 字号 */
+            line-height: 1.5; /* 行高 */
         }
 
-        .section {
-            background: #ffffff;
-            padding: 20px 15px;
-            margin-bottom: 10px;
-        }
-        .section-title {
-            font-size: 20px;
-            color: #333;
-            margin-bottom: 20px;
-            font-weight: 500;
+        /* 主页面（原第二界面） */
+        .main-container { /* 主页面容器 */
+            display: none; /* 默认隐藏 */
+            min-height: 100vh; /* 至少一屏高 */
+            background: #f8f9fa; /* 浅灰背景 */
+            padding-bottom: 70px; /* 底部留白 */
         }
 
-        .icons-grid-4 {
-            display: grid;
-            grid-template-columns: repeat(4, 1fr);
-            gap: 15px;
+        .main-header { /* 主页面头部 */
+            background: #ffffff; /* 白色 */
+            padding: 15px 20px; /* 内边距 */
+            text-align: center; /* 居中 */
+            position: relative; /* 相对定位 */
+            border-bottom: 1px solid #f0f0f0; /* 下边框 */
+            display: flex; /* 弹性布局 */
+            align-items: center; /* 垂直居中 */
+            justify-content: center; /* 水平居中 */
         }
-        .icons-grid-3 {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 15px;
+        .main-header h1 { /* 头部标题 */
+            font-size: 22px; /* 字号 */
+            color: #666; /* 灰色 */
+            font-weight: 500; /* 中等粗细 */
         }
-        .icons-grid-2 {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 15px;
-        }
-
-        .icon-item {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            cursor: pointer;
-            padding: 10px 5px;
-        }
-        .icon-box {
-            width: 60px;
-            height: 60px;
-            border-radius: 12px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin-bottom: 8px;
-            position: relative;
-        }
-        .icon-text {
-            font-size: 14px;
-            color: #333;
-            text-align: center;
+        .header-right-img { /* 头部右侧图片 */
+            position: absolute; /* 绝对定位 */
+            right: 20px; /* 靠右 */
+            top: 50%; /* 垂直居中 */
+            transform: translateY(-50%); /* 精确居中 */
+            width: 24px; /* 宽 */
+            height: 24px; /* 高 */
+            object-fit: contain; /* 等比缩放 */
         }
 
-        .icon-query { background: #e6f7f2; }
-        .icon-query .icon-inner {
+        .section { /* 内容区块 */
+            background: #ffffff; /* 白底 */
+            padding: 20px 15px; /* 内边距 */
+            margin-bottom: 10px; /* 下边距 */
+        }
+        .section-title { /* 区块标题 */
+            font-size: 20px; /* 字号 */
+            color: #333; /* 深灰 */
+            margin-bottom: 3px; /* 下边距 */
+            font-weight: 500; /* 中等粗细 */
+        }
+
+        .icons-grid-4 { /* 四列图标网格 */
+            display: grid; /* 网格布局 */
+            grid-template-columns: repeat(4, 1fr); /* 四等分 */
+            gap: 15px; /* 间距 */
+        }
+        .icons-grid-3 { /* 三列图标网格 */
+            display: grid; /* 网格布局 */
+            grid-template-columns: repeat(3, 1fr); /* 三等分 */
+            gap: 15px; /* 间距 */
+        }
+
+        .icon-item { /* 单个图标项 */
+            display: flex; /* 弹性布局 */
+            flex-direction: column; /* 纵向 */
+            align-items: center; /* 居中 */
+            cursor: pointer; /* 手型 */
+            padding: 10px 5px; /* 内边距 */
+        }
+        .icon-box { /* 图标外框 */
+            width: 60px; /* 宽 */
+            height: 60px; /* 高 */
+            border-radius: 12px; /* 圆角 */
+            display: flex; /* 弹性布局 */
+            align-items: center; /* 居中 */
+            justify-content: center; /* 居中 */
+            margin-bottom: 8px; /* 下边距 */
+            position: relative; /* 相对定位 */
+        }
+        .icon-text { /* 图标下方文字 */
+            font-size: 14px; /* 字号 */
+            color: #333; /* 深灰 */
+            text-align: center; /* 居中 */
+        }
+
+        .icon-query { background: #e6f7f2; } /* 学籍查询背景色 */
+        .icon-query .icon-inner { /* 内部图标 */
+            width: 40px; /* 宽 */
+            height: 40px; /* 高 */
+            background: #21b573; /* 绿色 */
+            border-radius: 8px; /* 圆角 */
+            display: flex; /* 弹性布局 */
+            align-items: center; /* 居中 */
+            justify-content: center; /* 居中 */
+            color: #fff; /* 白字 */
+            font-size: 18px; /* 字号 */
+        }
+        .icon-verify { background: #e6f7f2; } /* 学籍验证背景 */
+        .icon-verify .icon-inner { /* 同学籍查询样式 */
             width: 40px;
             height: 40px;
             background: #21b573;
@@ -240,19 +302,7 @@
             color: #fff;
             font-size: 18px;
         }
-        .icon-verify { background: #e6f7f2; }
-        .icon-verify .icon-inner {
-            width: 40px;
-            height: 40px;
-            background: #21b573;
-            border-radius: 8px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: #fff;
-            font-size: 18px;
-        }
-        .icon-edu-query { background: #e6f4ff; }
+        .icon-edu-query { background: #e6f4ff; } /* 学历查询背景 */
         .icon-edu-query .icon-inner {
             width: 40px;
             height: 40px;
@@ -264,9 +314,9 @@
             color: #fff;
             font-size: 18px;
         }
-        .icon-edu-verify { background: #e6f4ff; }
+        .icon-edu-verify { background: #e6f4ff; } /* 学历验证背景 */
         .icon-edu-verify .icon-inner {
-           width: 40px;
+            width: 40px;
             height: 40px;
             background: #eff2f0;
             border-radius: 8px;
@@ -276,7 +326,7 @@
             color: #fff;
             font-size: 18px;
         }
-        .icon-edu-cert { background: #e6f4ff; }
+        .icon-edu-cert { background: #e6f4ff; } /* 学历认证背景 */
         .icon-edu-cert .icon-inner {
             width: 40px;
             height: 40px;
@@ -288,19 +338,19 @@
             color: #fff;
             font-size: 18px;
         }
-        .icon-degree-query { background: #e6f4ff; }
+        .icon-degree-query { background: #e6f4ff; } /* 学位查询背景 */
         .icon-degree-query .icon-inner {
             width: 40px;
             height: 40px;
             background: #f0f0f1;
-            border-radius: 50%;
+            border-radius: 50%; /* 圆形 */
             display: flex;
             align-items: center;
             justify-content: center;
             color: #fff;
             font-size: 18px;
         }
-        .icon-degree-verify { background: #e6f4ff; }
+        .icon-degree-verify { background: #e6f4ff; } /* 学位验证背景 */
         .icon-degree-verify .icon-inner {
             width: 40px;
             height: 40px;
@@ -313,272 +363,632 @@
             font-size: 18px;
         }
 
-        .exam-banner {
-            background: linear-gradient(to right, #f0f9ff, #e6f4ff);
-            padding: 20px;
-            margin: 0 15px 20px;
+        .exam-banner { /* 考试宣传横幅 */
+            background: linear-gradient(to right, #f0f9ff, #e6f4ff); /* 渐变背景 */
+            padding: 20px; /* 内边距 */
+            margin: 0 15px 20px; /* 外边距 */
+            border-radius: 8px; /* 圆角 */
+            display: flex; /* 弹性布局 */
+            align-items: center; /* 居中 */
+            justify-content: space-between; /* 两端对齐 */
+        }
+        .exam-text { /* 考试文字 */
+            font-size: 20px; /* 字号 */
+            color: #333; /* 深灰 */
+            font-weight: 500; /* 中等粗细 */
+        }
+        .exam-img { /* 考试图片 */
+            width: 120px; /* 宽 */
+            height: 80px; /* 高 */
+            opacity: 0.9; /* 透明度 */
+        }
+
+        .service-item { /* 服务项 */
+            display: flex; /* 弹性布局 */
+            flex-direction: column; /* 纵向 */
+            align-items: center; /* 居中 */
+            cursor: pointer; /* 手型 */
+            padding: 15px 10px; /* 内边距 */
+            border-radius: 12px; /* 圆角 */
+        }
+        .service-item.bg-lightblue { background: #e6f4ff; } /* 浅蓝背景 */
+        .service-item.bg-lightgreen { background: #e6f7f2; } /* 浅绿背景 */
+        .service-item.bg-lightorange { background: #fef6e9; } /* 浅橙背景 */
+        .service-icon { /* 服务图标外框 */
+            width: 60px; /* 宽 */
+            height: 60px; /* 高 */
+            border-radius: 20%; /* 圆角 */
+            background: #fff; /* 白底 */
+            display: flex; /* 弹性布局 */
+            align-items: center; /* 居中 */
+            justify-content: center; /* 居中 */
+            margin-bottom: 10px; /* 下边距 */
+        }
+        .service-icon .inner { /* 图标内层 */
+            width: 40px; /* 宽 */
+            height: 40px; /* 高 */
+            border-radius: 50%; /* 圆形 */
+            display: flex; /* 弹性布局 */
+            align-items: center; /* 居中 */
+            justify-content: center; /* 居中 */
+            color: #fff; /* 白字 */
+            font-size: 18px; /* 字号 */
+        }
+        .service-icon.blue .inner { background: #409eff; } /* 蓝色 */
+        .service-icon.green .inner { background: #21b573; } /* 绿色 */
+        .service-icon.orange .inner { background: #ff9f43; } /* 橙色 */
+        .service-text { /* 服务文字 */
+            font-size: 14px; /* 字号 */
+            color: #333; /* 深灰 */
+            text-align: center; /* 居中 */
+        }
+
+        .footer-nav { /* 底部导航栏 */
+            position: fixed; /* 固定定位 */
+            bottom: 0; /* 底部 */
+            left: 50%; /* 水平居中 */
+            transform: translateX(-50%); /* 精确居中 */
+            width: 100%; /* 满宽 */
+            max-width: 480px; /* 最大宽 */
+            background: #ffffff; /* 白底 */
+            display: flex; /* 弹性布局 */
+            justify-content: space-around; /* 均匀分布 */
+            padding: 10px 0; /* 内边距 */
+            border-top: 1px solid #f0f0f0; /* 上边框 */
+            z-index: 10; /* 层级 */
+        }
+        .footer-nav-item { /* 导航项 */
+            display: flex; /* 弹性布局 */
+            flex-direction: column; /* 纵向 */
+            align-items: center; /* 居中 */
+            color: #999; /* 浅灰 */
+            font-size: 12px; /* 字号 */
+            cursor: pointer; /* 手型 */
+        }
+        .footer-nav-item.active { /* 激活状态 */
+            color: #21b573; /* 绿色 */
+        }
+        .footer-nav-item i { /* 图标 */
+            font-size: 24px; /* 字号 */
+            margin-bottom: 5px; /* 下边距 */
+        }
+
+        /* 第三界面：学信档案首页 */
+        .new-home-container { /* 新首页容器 */
+            display: none; /* 默认隐藏 */
+            min-height: 100vh; /* 至少一屏高 */
+            background: #ffffff; /* 背景色 */
+            padding-bottom: 70px; /* 底部留白 */
+        }
+
+        /* 第三界面顶部栏 */
+        .new-header { /* 新首页头部 */
+            background: #21b573; /* 绿色 */
+            color: #fff; /* 白字 */
+            display: flex; /* 弹性布局 */
+            align-items: center; /* 居中 */
+            justify-content: center; /* 居中 */
+            padding: 0px 0px; /* 内边距 */
+            position: relative; /* 相对定位 */
+        }
+        .new-header h1 { /* 头部标题 */
+            font-size: 20px; /* 字号 */
+            font-weight: 500; /* 中等粗细 */
+            display: flex; /* 弹性布局 */
+            align-items: center; /* 居中 */
+            gap: 8px; /* 间距 */
+            font-family: 楷体;
+        }
+        .new-header .back-icon { /* 返回图标 */
+            position: absolute; /* 绝对定位 */
+            left: 15px; /* 靠左 */
+            top: 50%; /* 垂直居中 */
+            transform: translateY(-50%); /* 精确居中 */
+            font-size: 24px; /* 字号 */
+            cursor: pointer; /* 手型 */
+        }
+        .new-header .share-icon { /* 分享图标 */
+            position: absolute; /* 绝对定位 */
+            right: 15px; /* 靠右 */
+            top: 50%; /* 垂直居中 */
+            transform: translateY(-50%); /* 精确居中 */
+            font-size: 24px; /* 字号 */
+            cursor: pointer; /* 手型 */
+        }
+
+        /* 决断力测试模块 */
+        .test-banner { /* 测试横幅 */
+            background: #f7f7f7; /* 白底 */
+            margin: 15px; /* 外边距 */
+            padding: 15px 20px; /* 内边距 */
+            border-radius: 8px; /* 圆角 */
+            display: flex; /* 弹性布局 */
+            align-items: center; /* 居中 */
+            justify-content: space-between; /* 两端对齐 */
+            max-height: 40px; /* 最大高度 */
+        }
+        .test-left { /* 左侧区域 */
+            display: flex; /* 弹性布局 */
+            align-items: center; /* 居中 */
+            gap: 15px; /* 间距 */
+        }
+        .test-icon { /* 测试图标 */
+            width: 50px; /* 宽 */
+            height: 50px; /* 高 */
+            border-radius: 8px; /* 圆角 */
+            object-fit: cover; /* 覆盖 */
+        }
+        .test-title { /* 测试标题 */
+            font-size: 18px; /* 字号 */
+            color: #3b3737; /* 深灰 */
+            font-weight: 500; /* 中等粗细 */
+        }
+        .test-btn { /* 测试按钮 */
+            background: #21b573; /* 绿色 */
+            color: #fff; /* 白字 */
+            border: none; /* 无边框 */
+            padding: 10px 15px; /* 内边距 */
+            border-radius: 25px; /* 圆角 */
+            font-size: 12px; /* 字号 */
+            font-weight: 300; /* 中等粗细 */
+            cursor: pointer; /* 手型 */
+        }
+
+        /* 考证现状模块 */
+        .cert-banner { /* 考证横幅 */
+/* 你的原有样式不动，只改 background 部分 */
+            margin: 15px;
+            padding: 35px 10px;
             border-radius: 8px;
             display: flex;
             align-items: center;
             justify-content: space-between;
+
+            /* 背景图片样式 */
+            background-image: url("https://i.imglt.com/20260403/5c5f2519e775d0873646f5c8ec4d7fef.png");
+            background-size: cover;
+            background-repeat: no-repeat;
+            background-position: center;
+            color: #fff; /* 白字 */
+            position: relative; /* 相对定位 */
+            overflow: hidden; /* 超出隐藏 */
         }
-        .exam-text {
-            font-size: 20px;
-            color: #333;
-            font-weight: 500;
+        .cert-banner::after { /* 伪元素装饰图 */
+            content: ''; /* 空内容 */
+            position: absolute; /* 绝对定位 */
+            right: 10px; /* 靠右 */
+            bottom: 0; /* 靠底 */
+            width: 200px; /* 宽 */
+            height: 100px; /* 高 */
+            background: url('') no-repeat right bottom; /* 背景图 */
+            background-size: contain; /* 等比 */
+            opacity: 0.8; /* 透明度 */
         }
-        .exam-img {
-            width: 120px;
-            height: 80px;
-            opacity: 0.9;
+        .cert-title { /* 考证标题 */
+            font-size: 2px; /* 字号 */
+            font-weight: bold; /* 加粗 */
+            margin-bottom: 8px; /* 下边距 */
         }
-        .check-badge {
-            position: absolute;
-            right: 30px;
-            top: 50%;
-            transform: translateY(-50%);
-            width: 30px;
-            height: 30px;
-            background: #21b573;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: #fff;
+        .cert-desc { /* 考证描述 */
+            font-size: 18px; /* 字号 */
+            line-height: 1.5; /* 行高 */
+            max-width: 70%; /* 最大宽 */
         }
 
-        .service-item {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            cursor: pointer;
-            padding: 15px 10px;
-            border-radius: 12px;
+        /* 功能图标网格 */
+        .func-grid { /* 功能网格 */
+            display: grid; /* 网格布局 */
+            grid-template-columns: repeat(3, 1fr); /* 三列 */
+            gap: 15px 15px; /* 间距 */
+            padding: 10px 10px; /* 内边距 */
+            background: #ffffff; /* 白底 */
+            border-radius: 8px; /* 圆角 */
         }
-        .service-item.bg-lightblue { background: #e6f4ff; }
-        .service-item.bg-lightgreen { background: #e6f7f2; }
-        .service-item.bg-lightorange { background: #fef6e9; }
-        .service-icon {
-            width: 60px;
-            height: 60px;
-            border-radius: 20%;
-            background: #fff;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin-bottom: 10px;
+        .func-item { /* 功能项 */
+            display: flex; /* 弹性布局 */
+            flex-direction: column; /* 纵向 */
+            align-items: center; /* 居中 */
+            cursor: pointer; /* 手型 */
+            padding: 10px 5px; /* 内边距 */
         }
-        .service-icon .inner {
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: #fff;
-            font-size: 18px;
+        .func-icon { /* 功能图标 */
+            width: 25px; /* 宽 */
+            height: 30px; /* 高 */
+            margin-bottom: 5px; /* 下边距 */
+            object-fit: contain; /* 等比 */
         }
-        .service-icon.blue .inner { background: #409eff; }
-        .service-icon.green .inner { background: #21b573; }
-        .service-icon.orange .inner { background: #ff9f43; }
-        .service-text {
-            font-size: 14px;
-            color: #333;
-            text-align: center;
+        .func-text { /* 功能文字 */
+            font-size: 12px; /* 字号 */
+            color: #333; /* 深灰 */
+            text-align: center; /* 居中 */
+            line-height: 1.4; /* 行高 */
         }
 
-        .footer-nav {
-            position: fixed;
-            bottom: 0;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 100%;
-            max-width: 480px;
-            background: #ffffff;
-            display: flex;
-            justify-content: space-around;
-            padding: 10px 0;
-            border-top: 1px solid #f0f0f0;
-            z-index: 10;
+        /* 第三界面底部导航 */
+        .new-footer-nav { /* 新底部导航 */
+            position: fixed; /* 固定定位 */
+            bottom: 0; /* 底部 */
+            left: 50%; /* 水平居中 */
+            transform: translateX(-50%); /* 精确居中 */
+            width: 100%; /* 满宽 */
+            max-width: 480px; /* 最大宽 */
+            background: #ffffff; /* 白底 */
+            display: flex; /* 弹性布局 */
+            justify-content: space-around; /* 均匀分布 */
+            padding: 10px 0; /* 内边距 */
+            border-top: 1px solid #f0f0f0; /* 上边框 */
+            z-index: 10; /* 层级 */
         }
-        .footer-nav-item {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            color: #999;
-            font-size: 12px;
-            cursor: pointer;
+        .new-footer-nav-item { /* 导航项 */
+            display: flex; /* 弹性布局 */
+            flex-direction: column; /* 纵向 */
+            align-items: center; /* 居中 */
+            color: #999; /* 浅灰 */
+            font-size: 14px; /* 字号 */
+            cursor: pointer; /* 手型 */
         }
-        .footer-nav-item.active {
-            color: #21b573;
+        .new-footer-nav-item.active { /* 激活状态 */
+            color: #21b573; /* 绿色 */
         }
-        .footer-nav-item i {
-            font-size: 24px;
+        .new-footer-nav-item i { /* 图标 */
+            font-size: 28px; /* 字号 */
+            margin-bottom: 5px; /* 下边距 */
+        }
+
+        /* 第四界面：高等教育信息详情页 */
+        .edu-info-container { /* 教育信息页容器 */
+            display: none; /* 默认隐藏 */
+            min-height: 100vh; /* 至少一屏高 */
+            background: #ffffff; /* 背景色 */
+            padding-bottom: 70px; /* 底部留白 */
+
+        }
+
+        /* 第四界面顶部栏 */
+        .edu-header { /* 教育信息页头部 */
+            background: #21b573; /* 绿色 */
+            color: #fff; /* 白字 */
+            display: flex; /* 弹性布局 */
+            align-items: center; /* 居中 */
+            justify-content: center; /* 居中 */
+            padding: 0px 0px; /* 内边距 */
+            position: relative; /* 相对定位 */
+            font-family: 楷体;
+        }
+        .edu-header h1 { /* 头部标题 */
+            font-size: 15px; /* 字号 */
+            font-weight: 500; /* 中等粗细 */
+        }
+        .edu-header .back-icon { /* 返回图标 */
+            position: absolute; /* 绝对定位 */
+            left: 15px; /* 靠左 */
+            top: 50%; /* 垂直居中 */
+            transform: translateY(-50%); /* 精确居中 */
+            font-size: 20px; /* 字号 */
+            cursor: pointer; /* 手型 */
+        }
+
+        /* 职场实习banner */
+        .intern-banner { /* 实习横幅 */
+            background-image: url("https://i.imglt.com/20260403/bd8e8098d653a5890089bdd28ba4f8bb.png"); /* 背景图 */
+            background-size: cover; /* 覆盖 */
+            background-position: center; /* 居中 */
+            margin: 10px 20px; /* 外边距 */
+            padding: 30px; /* 内边距 */
+            border-radius: 12px; /* 圆角 */
+            display: flex; /* 弹性布局 */
+            justify-content: space-between; /* 两端对齐 */
+            align-items: center; /* 居中 */
+        }
+        .intern-left { /* 左侧文字区 */
+            max-width: 70%; /* 最大宽 */
+        }
+        .intern-title { /* 实习标题 */
+            font-size: 28px; /* 字号 */
+            font-weight: bold; /* 加粗 */
+            color: #4a148c; /* 紫色 */
+            margin-bottom: 8px; /* 下边距 */
+        }
+        .intern-desc { /* 实习描述 */
+            font-size: 16px; /* 字号 */
+            color: #666; /* 灰色 */
+            line-height: 1.5; /* 行高 */
+        }
+
+        /* 信息模块通用样式 */
+        .info-section { /* 信息区块 */
+            background: #ffffff; /* 白底 */
+            margin: 0px 10px 0px; /* 外边距 */
+            padding: 5px 0px; /* 内边距 */
+            border-radius: 0px; /* 圆角 */
+        }
+        .section-header { /* 区块头部 */
+            display: flex; /* 弹性布局 */
+            justify-content: space-between; /* 两端对齐 */
+            align-items: center; /* 居中 */
+            margin-bottom: 15px; /* 下边距 */
+        }
+        .section-title { /* 区块标题 */
+            font-size: 15px; /* 字号 */
+            color: #333; /* 深灰 */
+            font-weight: 500; /* 中等粗细 */
+        }
+        .section-tip { /* 提示文字 */
+            font-size: 12px; /* 字号 */
+            color: #999; /* 浅灰 */
+        }
+        .section-tip a { /* 提示链接 */
+            color: #21b573; /* 绿色 */
+            text-decoration: none; /* 无下划线 */
+        }
+
+        /* 学籍/学历卡片样式 */
+        .edu-card { /* 教育卡片 */
+            border-radius: 12px; /* 圆角 */
+            padding: 15px 15px; /* 内边距 */
+            color: #fff; /* 白字 */
+            position: relative; /* 相对定位 */
+            cursor: pointer; /* 手型 */
+            margin: 10px ; /* 水平外边距 */
+        }
+        .edu-card:last-child { /* 最后一张无下边距 */
+            margin-bottom: 0;
+        }
+        .edu-card.green { /* 绿色卡片 */
+            background: linear-gradient(135deg, #43d08b, #21b573); /* 渐变 */
+        }
+        .edu-card.blue { /* 蓝色卡片 */
+            background: linear-gradient(135deg, #64b5f6, #42a5f5); /* 渐变 */
+        }
+        .edu-school { /* 学校名称 */
+            font-size: 18px; /* 字号 */
+            font-weight: normal; /* 加粗 */
+            margin-bottom: 5px; /* 下边距 */
+        }
+        .edu-badge { /* 学历徽章 */
+            position: absolute; /* 绝对定位 */
+            right: 10px; /* 靠右 */
+            top: 15px; /* 靠上 */
+            background: rgba(0,0,0,0.2); /* 半透明 */
+            padding: 1px 12px; /* 内边距 */
+            border-radius: 50px; /* 圆角 */
+            font-size: 12px; /* 字号 */
+            font-weight: 300; /* 中等粗细 */
+        }
+        .edu-major { /* 专业信息 */
+            font-size: 15px; /* 字号 */
+            display: flex; /* 弹性布局 */
+            align-items: center; /* 居中 */
+            gap: 20px; /* 间距 */
+        }
+
+        /* 学位信息模块 */
+        .degree-section { /* 学位区块 */
+            background: #f7f7f7; /* 白底 */
+            margin: 0 10px 15px; /* 外边距 */
+            padding: 30px 15px; /* 内边距 */
+            border-radius: 8px; /* 圆角 */
+            text-align: center; /* 居中 */
+            color: #333; /* 深灰 */
+            font-size: 18px; /* 字号 */
+            line-height: 1.0; /* 行高 */
+        }
+        .degree-tip { /* 学位提示 */
+            font-size: 16px; /* 字号 */
+            color: #999; /* 浅灰 */
+            margin-top: 10px; /* 上边距 */
             margin-bottom: 5px;
         }
-
-        /* 加载条页面 */
-        .loading-page {
-            position: fixed;
-            top: 0;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 100%;
-            max-width: 480px;
-            height: 100vh;
-            background: #fff;
-            display: none;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            z-index: 9999;
+        .degree-tip a { /* 提示链接 */
+            color: #21b573; /* 绿色 */
+            text-decoration: none; /* 无下划线 */
         }
-        .loading-logo {
-            width: 120px;
-            margin-bottom: 40px;
-        }
-        .loading-text {
-            font-size: 18px;
-            color: #21b573;
-            margin-bottom: 20px;
-        }
-        .progress-bar {
-            width: 280px;
-            height: 6px;
-            background: #f0f0f0;
-            border-radius: 3px;
-            overflow: hidden;
-        }
-        .progress-active {
-            height: 100%;
-            width: 0%;
-            background: #21b573;
-            border-radius: 3px;
-            animation: progress 2s linear forwards;
-        }
-        @keyframes progress {
-            0% { width: 0%; }
-            100% { width: 100%; }
+        .tip-toggle { /* 提示切换 */
+            text-align: center; /* 居中 */
+            color: #21b573; /* 绿色 */
+            font-size: 18px; /* 字号 */
+            padding: 10px 0; /* 内边距 */
+            cursor: pointer; /* 手型 */
         }
 
-        /* 顶部返回加载条（网址栏下方） */
-        #topProgress {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 0%;
-            height: 3px;
-            background: #21b573;
-            z-index: 99999;
-            transition: width 0.1s linear;
+        /* 考研信息模块 */
+        .exam-card { /* 考研卡片 */
+            background: linear-gradient(135deg, #4dd0e1, #26c6da); /* 渐变 */
+            border-radius: 12px; /* 圆角 */
+            padding: 25px 15px; /* 内边距 */
+            color: #fff; /* 白字 */
+        }
+        .exam-school { /* 考研学校 */
+            font-size: 20px; /* 字号 */
+            font-weight: normal; /* 加粗 */
         }
 
-        /* ========== 第三页面：增强滑动效果 ========== */
-        #studentPage {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: #000;
-            z-index: 999;
-            overflow-y: auto; /* 允许垂直滑动 */
-            -webkit-overflow-scrolling: touch; /* 苹果顺滑滚动 */
-            scroll-behavior: smooth; /* 平滑滚动 */
+        /* 第四界面底部导航 */
+        .edu-footer-nav { /* 教育页底部导航 */
+            position: fixed; /* 固定定位 */
+            bottom: 0; /* 底部 */
+            left: 50%; /* 水平居中 */
+            transform: translateX(-50%); /* 精确居中 */
+            width: 100%; /* 满宽 */
+            max-width: 480px; /* 最大宽 */
+            background: #ffffff; /* 白底 */
+            display: flex; /* 弹性布局 */
+            justify-content: space-around; /* 均匀分布 */
+            padding: 10px 0; /* 内边距 */
+            border-top: 1px solid #f0f0f0; /* 上边框 */
+            z-index: 10; /* 层级 */
         }
-        #studentImg {
-            width: 100%;
-            height: auto; /* 自动高度，允许超长 */
-            display: block;
-            min-height: 100vh;
-            object-fit: contain;
+        .edu-footer-nav-item { /* 导航项 */
+            display: flex; /* 弹性布局 */
+            flex-direction: column; /* 纵向 */
+            align-items: center; /* 居中 */
+            color: #999; /* 浅灰 */
+            font-size: 14px; /* 字号 */
+            cursor: pointer; /* 手型 */
+        }
+        .edu-footer-nav-item.active { /* 激活状态 */
+            color: #21b573; /* 绿色 */
+        }
+        .edu-footer-nav-item i { /* 图标 */
+            font-size: 28px; /* 字号 */
+            margin-bottom: 5px; /* 下边距 */
         }
 
-        /* 去掉浏览器蓝色导航线 */
-        a {
-            -webkit-tap-highlight-color: transparent;
-            text-decoration: none;
+        /* 第五界面：学籍详情页面（全屏无白边） */
+        .user-detail-container { /* 用户详情页容器 */
+            display: none; /* 默认隐藏 */
+            min-height: 100vh; /* 至少一屏高 */
+            background: #f5f5f5; /* 背景色 */
+            padding-bottom: 0px; /* 无底部留白 */
         }
-        * {
-            -webkit-tap-highlight-color: transparent;
-            outline: none !important;
+        .user-detail-header { /* 详情页头部 */
+            background: #21b573; /* 绿色 */
+            color: #fff; /* 白字 */
+            display: flex; /* 弹性布局 */
+            align-items: center; /* 居中 */
+            justify-content: center; /* 居中 */
+            padding: 0px 20px; /* 内边距 */
+            position: relative; /* 相对定位 */
+        }
+        .user-detail-header h1 { /* 头部标题 */
+            font-size: 15px; /* 字号 */
+            font-weight: 500; /* 中等粗细 */
+            font-family: 楷体;
+        }
+        .user-detail-header .back-icon { /* 返回图标 */
+            position: absolute; /* 绝对定位 */
+            left: 15px; /* 靠左 */
+            top: 50%; /* 垂直居中 */
+            transform: translateY(-50%); /* 精确居中 */
+            font-size: 24px; /* 字号 */
+            cursor: pointer; /* 手型 */
+        }
+        .user-detail-content { /* 详情内容区 */
+            padding: 0; /* 无内边距 */
+            text-align: center; /* 居中 */
+            width: 100%; /* 满宽 */
+            height: calc(100vh - 52px); /* 计算高度 */
+        }
+        .user-detail-img { /* 详情图片 */
+            width: 100%; /* 满宽 */
+            height: 100%; /* 满高 */
+            object-fit: cover; /* 覆盖 */
+            border-radius: 0; /* 无圆角 */
+            box-shadow: none; /* 无阴影 */
+            display: block; /* 块级 */
         }
 
-        @media (max-width: 375px) {
-            .logo-text {
-                font-size: 30px;
+        /* 后台 */
+        #adminPage { /* 管理员页面 */
+            display:none; /* 默认隐藏 */
+            position:fixed; /* 固定定位 */
+            top:0; /* 顶部 */
+            left:0; /* 左侧 */
+            width:100vw; /* 满宽 */
+            height:100vh; /* 满高 */
+            background:#fff; /* 白底 */
+            z-index:9999; /* 高层级 */
+            padding:20px; /* 内边距 */
+            box-sizing:border-box; /* 盒模型 */
+            overflow-y:auto; /* 纵向滚动 */
+        }
+
+        @media (max-width: 375px) { /* 小屏适配 */
+            .logo-text { /* Logo 文字 */
+                font-size: 30px; /* 缩小字号 */
             }
-            .icon-box {
-                width: 50px;
+            .icon-box { /* 图标框 */
+                width: 50px; /* 缩小 */
                 height: 50px;
             }
-            .icon-inner {
-                width: 35px;
+            .icon-inner { /* 图标内层 */
+                width: 35px; /* 缩小 */
                 height: 35px;
             }
+            .test-title { /* 测试标题 */
+                font-size: 22px; /* 缩小 */
+            }
+            .cert-title { /* 考证标题 */
+                font-size: 24px; /* 缩小 */
+            }
+            .cert-desc { /* 考证描述 */
+                font-size: 16px; /* 缩小 */
+            }
+            .func-text { /* 功能文字 */
+                font-size: 16px; /* 缩小 */
+            }
+            .edu-school { /* 学校名称 */
+                font-size: 24px; /* 缩小 */
+            }
+            .edu-major { /* 专业 */
+                font-size: 18px; /* 缩小 */
+            }
         }
-    </style>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-</head>
-<body>
+    </style> <!-- 样式结束 -->
 
-<!-- 顶部全局加载条 -->
-<div id="topProgress"></div>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"> <!-- Font Awesome 图标库 -->
+</head> <!-- head 结束 -->
 
-<div class="page-wrapper">
+<body> <!-- body 开始 -->
+
+<!-- 顶部页面跳转加载条 -->
+<div id="pageLoader"></div> <!-- 页面切换进度条 -->
+
+<div class="page-wrapper"> <!-- 页面整体容器 -->
+
     <!-- 加载条页面 -->
-    <div class="loading-page" id="loadingPage">
-        <img src="https://s41.ax1x.com/2026/03/31/pe8RzUf.png" class="loading-logo">
-        <div class="loading-text">正在加载学信档案...</div>
-        <div class="progress-bar">
-            <div class="progress-active"></div>
+    <div class="loading-page" id="loadingPage"> <!-- 加载页 -->
+        <img src="https://s41.ax1x.com/2026/03/31/pe8RzUf.png" class="loading-logo"> <!-- 加载Logo -->
+        <div class="loading-text">正在加载学信档案...</div> <!-- 加载文字 -->
+        <div class="progress-bar"> <!-- 进度条 -->
+            <div class="progress-active"></div> <!-- 动态进度 -->
         </div>
     </div>
 
     <!-- 登录页 -->
-    <div class="login-container" id="loginPage">
-        <div class="logo-wrap">
-            <img src="https://s41.ax1x.com/2026/03/31/pe8RzUf.png" alt="学信网logo" class="logo-img">
-            <span class="logo-text">学信档案</span>
+    <div class="login-container" id="loginPage"> <!-- 登录页容器 -->
+        <div class="logo-wrap"> <!-- Logo 区域 -->
+            <img src="https://s41.ax1x.com/2026/03/31/pe8RzUf.png" alt="学信网logo" class="logo-img"> <!-- Logo 图 -->
+            <span class="logo-text">学信档案</span> <!-- Logo 文字 -->
         </div>
-        <p class="login-desc">请使用 学信网账号 进行登录</p>
-        <div class="input-group">
-            <input type="text" id="username" placeholder="手机号/邮箱">
+        <p class="login-desc">请使用 学信网账号 进行登录</p> <!-- 登录提示 -->
+        <div class="input-group"> <!-- 用户名输入 -->
+            <input type="text" id="username" placeholder="手机号/邮箱"> <!-- 用户名输入框 -->
         </div>
-        <div class="input-group">
-            <input type="password" id="password" placeholder="密码">
+        <div class="input-group"> <!-- 密码输入 -->
+            <input type="password" id="password" placeholder="密码"> <!-- 密码输入框 -->
         </div>
-        <button class="login-btn" id="loginBtn">登录</button>
-        <div class="login-links">
-            <a href="#">找回密码</a>
-            <a href="#">注册</a>
+        <button class="login-btn" id="loginBtn">登录</button> <!-- 登录按钮 -->
+        <div class="login-links"> <!-- 辅助链接 -->
+            <a href="#">找回密码</a> <!-- 找回密码 -->
+            <a href="#">注册</a> <!-- 注册 -->
         </div>
-        <div class="bottom-nav">
-            <a href="#" class="nav-item">首页</a>
-            <a href="#" class="nav-item">帮助中心</a>
-            <a href="#" class="nav-item">联系我们</a>
+        <div class="bottom-nav"> <!-- 底部导航 -->
+            <a href="#" class="nav-item">首页</a> <!-- 首页 -->
+            <a href="#" class="nav-item">帮助中心</a> <!-- 帮助 -->
+            <a href="#" class="nav-item">联系我们</a> <!-- 联系 -->
         </div>
 
-        <!-- 新增：底部版权信息 -->
+        <!-- 底部版权信息 -->
         <div class="copyright">
             Copyright © 2003-2026 学信网 All Rights Reserved
         </div>
 
-        <div id="adminBtn" style="position:fixed; right:10px; bottom:40px; width:10px; height:10px; background:#ffffff; border-radius:8px; cursor:pointer; z-index:999; opacity:0;"></div>
+        <div id="adminBtn" style="position:fixed; right:10px; bottom:40px; width:10px; height:10px; background:#ffffff; border-radius:8px; cursor:pointer; z-index:999; opacity:0;"></div> <!-- 管理员入口（隐形） -->
     </div>
 
-    <!-- 主页面 -->
-    <div class="main-container" id="mainPage">
-        <div class="main-header">
-            <h1>学信网</h1>
-            <img src="https://pic1.imgdb.cn/item/69ce15c8e22aad8a0c64a24b.jpg" class="header-right-img">
+    <!-- 主页面（原第二界面） -->
+    <div class="main-container" id="mainPage"> <!-- 主页面 -->
+        <div class="main-header"> <!-- 头部 -->
+            <h1>学信网</h1> <!-- 标题 -->
+            <img src="https://pic1.imgdb.cn/item/69ce15c8e22aad8a0c64a24b.jpg" class="header-right-img"> <!-- 右侧图 -->
         </div>
 
-        <div class="section">
-            <div class="section-title">学籍学历学位</div>
-            <div class="icons-grid-4">
-                <div class="icon-item" id="studentQuery">
+        <div class="section"> <!-- 学籍学历区块 -->
+            <div class="section-title">学籍学历学位</div> <!-- 区块标题 -->
+            <div class="icons-grid-4"> <!-- 四列图标 -->
+                <!-- 学籍查询：绑定跳转事件 -->
+                <div class="icon-item" id="studentQuery"> <!-- 学籍查询 -->
                     <div class="icon-box icon-query">
                         <div class="icon-inner">
                             <img src="https://s41.ax1x.com/2026/03/31/pe8IAAI.png" style="width:40px; height:50px; object-fit:contain;">
@@ -586,7 +996,7 @@
                     </div>
                     <div class="icon-text">学籍查询</div>
                 </div>
-                <div class="icon-item">
+                <div class="icon-item"> <!-- 学籍验证 -->
                     <div class="icon-box icon-verify">
                         <div class="icon-inner">
                             <img src="https://pic1.imgdb.cn/item/69cb98885cfefdcff4aff8e4.png" style="width:40px; height:50px; object-fit:contain;">
@@ -594,7 +1004,7 @@
                     </div>
                     <div class="icon-text">学籍验证</div>
                 </div>
-                <div class="icon-item">
+                <div class="icon-item"> <!-- 学历查询 -->
                     <div class="icon-box icon-edu-query">
                         <div class="icon-inner">
                             <img src="https://pic1.imgdb.cn/item/69cb98885cfefdcff4aff8e9.png" style="width:40px; height:50px; object-fit:contain;">
@@ -602,7 +1012,7 @@
                     </div>
                     <div class="icon-text">学历查询</div>
                 </div>
-                <div class="icon-item">
+                <div class="icon-item"> <!-- 学历验证 -->
                     <div class="icon-box icon-edu-verify">
                         <div class="icon-inner">
                             <img src="https://pic1.imgdb.cn/item/69cb98885cfefdcff4aff8e5.png" style="width:40px; height:50px; object-fit:contain;">
@@ -610,7 +1020,7 @@
                     </div>
                     <div class="icon-text">学历验证</div>
                 </div>
-                <div class="icon-item">
+                <div class="icon-item"> <!-- 学历认证 -->
                     <div class="icon-box icon-edu-cert">
                         <div class="icon-inner">
                             <img src="https://pic1.imgdb.cn/item/69cb98885cfefdcff4aff8e2.png" style="width:40px; height:50px; object-fit:contain;">
@@ -618,7 +1028,7 @@
                     </div>
                     <div class="icon-text">学历认证</div>
                 </div>
-                <div class="icon-item">
+                <div class="icon-item"> <!-- 学位查询 -->
                     <div class="icon-box icon-degree-query">
                         <div class="icon-inner">
                             <img src="https://pic1.imgdb.cn/item/69cb98895cfefdcff4aff8eb.png" style="width:40px; height:100px; object-fit:contain;">
@@ -626,7 +1036,7 @@
                     </div>
                     <div class="icon-text">学位查询</div>
                 </div>
-                <div class="icon-item">
+                <div class="icon-item"> <!-- 学位验证 -->
                     <div class="icon-box icon-degree-verify">
                         <div class="icon-inner">
                             <img src="https://pic1.imgdb.cn/item/69cb9ad25cfefdcff4b0035d.png" style="width:40px; height:50px; object-fit:contain;">
@@ -637,14 +1047,14 @@
             </div>
         </div>
 
-        <div class="exam-banner" style="padding:0; background:none; display:block;">
+        <div class="exam-banner" style="padding:0; background:none; display:block;"> <!-- 考试宣传图 -->
             <img src="https://s41.ax1x.com/2026/03/31/pe85U0A.png" style="width:110%; height:auto; border-radius:8px; display:block;">
         </div>
 
-        <div class="section">
+        <div class="section"> <!-- 出国教育服务 -->
             <div class="section-title">出国教育背景信息服务</div>
-            <div class="icons-grid-3">
-                <div class="service-item bg-lightblue">
+            <div class="icons-grid-3"> <!-- 三列图标 -->
+                <div class="service-item bg-lightblue"> <!-- 中等教育学历 -->
                     <div class="service-icon blue">
                         <div class="inner">
                             <img src="https://pic1.imgdb.cn/item/69cb9c8b5cfefdcff4b02cc0.png" style="width:40px; height:50px; object-fit:contain;">
@@ -652,7 +1062,7 @@
                     </div>
                     <div class="service-text">中等教育学历</div>
                 </div>
-                <div class="service-item bg-lightblue">
+                <div class="service-item bg-lightblue"> <!-- 高等教育成绩单 -->
                     <div class="service-icon blue">
                         <div class="inner">
                             <img src="https://pic1.imgdb.cn/item/69cb9c8b5cfefdcff4b02cc4.png" style="width:40px; height:50px; object-fit:contain;">
@@ -660,7 +1070,7 @@
                     </div>
                     <div class="service-text">高等教育成绩单</div>
                 </div>
-                <div class="service-item bg-lightblue">
+                <div class="service-item bg-lightblue"> <!-- 高考成绩单 -->
                     <div class="service-icon blue">
                         <div class="inner">
                             <img src="https://pic1.imgdb.cn/item/69cb9c8b5cfefdcff4b02cc2.png" style="width:40px; height:50px; object-fit:contain;">
@@ -668,7 +1078,7 @@
                     </div>
                     <div class="service-text">高考成绩单</div>
                 </div>
-                <div class="service-item bg-lightgreen">
+                <div class="service-item bg-lightgreen"> <!-- 中学成绩单 -->
                     <div class="service-icon green">
                         <div class="inner">
                             <img src="https://pic1.imgdb.cn/item/69cb9c8b5cfefdcff4b02cc3.png" style="width:40px; height:50px; object-fit:contain;">
@@ -676,7 +1086,7 @@
                     </div>
                     <div class="service-text">中学成绩单</div>
                 </div>
-                <div class="service-item bg-lightorange">
+                <div class="service-item bg-lightorange"> <!-- 会考成绩单 -->
                     <div class="service-icon orange">
                         <div class="inner">
                             <img src="https://pic1.imgdb.cn/item/69cb9c8b5cfefdcff4b02cc1.png" style="width:40px; height:50px; object-fit:contain;">
@@ -687,296 +1097,433 @@
             </div>
         </div>
 
-        <div class="footer-nav">
-            <div class="footer-nav-item active">
+        <div class="footer-nav"> <!-- 底部导航 -->
+            <div class="footer-nav-item active"> <!-- 首页 -->
                 <i class="fas fa-home"></i>
                 <span>首页</span>
             </div>
-            <div class="footer-nav-item">
-                <i class="fas fa-list-alt"></i>
-                <span>新闻</span>
+            <div class="footer-nav-item"> <!-- 学籍学历学位 -->
+                <i class="fas fa-graduation-cap"></i>
+                <span>学籍学历学位</span>
             </div>
-            <div class="footer-nav-item">
+            <div class="footer-nav-item"> <!-- 个人测评 -->
+                <i class="fas fa-check-square"></i>
+                <span>个人测评</span>
+            </div>
+            <div class="footer-nav-item"> <!-- 求职招聘 -->
+                <i class="fas fa-briefcase"></i>
+                <span>求职招聘</span>
+            </div>
+            <div class="footer-nav-item"> <!-- 我的 -->
                 <i class="fas fa-user"></i>
                 <span>我的</span>
             </div>
         </div>
     </div>
-</div>
 
-<!-- 学籍查询页面（第三界面，内置返回逻辑） -->
-<div id="studentPage">
-    <img id="studentImg">
-</div>
+    <!-- 第三界面：学信档案首页 -->
+    <div class="new-home-container" id="newHomePage"> <!-- 新首页 -->
+        <div class="new-header"> <!-- 头部 -->
+            <i class="fas fa-arrow-left back-icon" id="backToMain"></i> <!-- 返回 -->
+            <h1><img src="https://i.imglt.com/20260403/c074527d22859270eeac013621742c8a.png" style="width:35px; height:35px; object-fit:contain;"></img> 学信档案</h1> <!-- 标题 -->
+            <img src="https://i.imglt.com/20260403/8bd8f47fec4d4ede07ecbaa279792d45.png"width="20px" height="20px" class="share-icon" alt="分享"></img> <!-- 分享 -->
+        </div>
+
+        <!-- 决断力测试模块 -->
+        <div class="test-banner"> <!-- 测试横幅 -->
+            <div class="test-left"> <!-- 左侧 -->
+                <img src="https://i.imglt.com/20260403/d68494720af5b811029f5de72065203a.png" class="test-icon" alt="决断力测试"> <!-- 图标 -->
+                <span class="test-title">决断力测试</span> <!-- 标题 -->
+            </div>
+            <button class="test-btn">去测评</button> <!-- 按钮 -->
+        </div>
+
+        <!-- 考证现状模块 -->
+        <div class="cert-banner"> <!-- 考证横幅 -->
+            <div class="cert-title"></div> <!-- 标题 -->
+            <div class="cert-desc"></div> <!-- 描述 -->
+        </div>
+
+        <!-- 功能图标网格 -->
+        <div class="func-grid"> <!-- 功能网格 -->
+            <div class="func-item" id="eduInfoBtn"> <!-- 高等教育信息 -->
+                <img src="https://i.imglt.com/20260403/a6ecdc75d2403942988cc4931b6710ca.png" class="func-icon" alt="高等教育信息">
+                <div class="func-text">高等教育信息</div>
+            </div>
+            <div class="func-item"> <!-- 在线验证报告 -->
+                <img src="https://i.imglt.com/20260403/4d18d436b143affea7b2d047f650820a.png" class="func-icon" alt="在线验证报告">
+                <div class="func-text">在线验证报告</div>
+            </div>
+            <div class="func-item"> <!-- 学历学位认证与成绩验证 -->
+                <img src="https://i.imglt.com/20260403/7b754670392ae410b0f3ec31c0b3950a.png" class="func-icon" alt="学历学位认证与成绩验证">
+                <div class="func-text">学历学位认证<br>与成绩验证</div>
+            </div>
+            <div class="func-item"> <!-- 出国（境）报告发送 -->
+                <img src="https://i.imglt.com/20260403/0d315caee8f0f2092e511e7345b60a21.png" class="func-icon" alt="出国（境）报告发送">
+                <div class="func-text">出国（境）报告<br>发送</div>
+            </div>
+            <div class="func-item"> <!-- 毕业证书图像校对 -->
+                <img src="https://i.imglt.com/20260404/54b82f65f56f238b759e9a2bd9ca27bd.png" class="func-icon" alt="毕业证书图像校对">
+                <div class="func-text">毕业证书图像<br>校对</div>
+            </div>
+            <div class="func-item"> <!-- 就业 -->
+                <img src="https://i.imglt.com/20260403/8c6a865662ec2bd14928e5fd0cf2a53b.png" class="func-icon" alt="就业">
+                <div class="func-text">就业</div>
+            </div>
+            <div class="func-item"> <!-- 学校满意度 -->
+                <img src="https://i.imglt.com/20260403/ef04182ecdcd8660383207c4a3b2d385.png" class="func-icon" alt="学校满意度">
+                <div class="func-text">学校满意度</div>
+            </div>
+            <div class="func-item"> <!-- 个人测评 -->
+                <img src="https://i.imglt.com/20260403/785c939303ca51f205489e97f599c9fe.png" class="func-icon" alt="个人测评">
+                <div class="func-text">个人测评</div>
+            </div>
+            <div class="func-item"> <!-- 双千计划微专业 -->
+                <img src="https://i.imglt.com/20260403/e8f35fd8ef285d69cae956ca1d34c187.png" class="func-icon" alt="双千计划微专业">
+                <div class="func-text">"双千"计划<br>"微专业"</div>
+            </div>
+        </div>
+
+        <!-- 第三界面底部导航 -->
+        <div class="new-footer-nav"> <!-- 底部导航 -->
+            <div class="new-footer-nav-item active"> <!-- 首页 -->
+                <i class="fas fa-home"></i>
+                <span>首页</span>
+            </div>
+            <div class="new-footer-nav-item"> <!-- 学籍学历学位 -->
+                <i class="fas fa-graduation-cap"></i>
+                <span>学籍学历学位</span>
+            </div>
+            <div class="new-footer-nav-item"> <!-- 个人测评 -->
+                <i class="fas fa-check-square"></i>
+                <span>个人测评</span>
+            </div>
+            <div class="new-footer-nav-item"> <!-- 求职招聘 -->
+                <i class="fas fa-briefcase"></i>
+                <span>求职招聘</span>
+            </div>
+            <div class="new-footer-nav-item"> <!-- 我的 -->
+                <i class="fas fa-user"></i>
+                <span>我的</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- 第四界面：高等教育信息详情页 -->
+    <div class="edu-info-container" id="eduInfoPage"> <!-- 教育信息页 -->
+        <div class="edu-header"> <!-- 头部 -->
+            <i class="fas fa-arrow-left back-icon" id="backToNewHome"></i> <!-- 返回 -->
+            <h1>高等教育信息</h1> <!-- 标题 -->
+        </div>
+
+        <!-- 职场实习banner -->
+        <div class="intern-banner"> <!-- 实习横幅 -->
+            <div class="intern-left"> <!-- 左侧文字 -->
+                <div class="intern-title"></div> <!-- 标题 -->
+                <div class="intern-desc"></div> <!-- 描述 -->
+            </div>
+        </div>
+
+        <!-- 学籍信息模块 -->
+        <div class="info-section"> <!-- 信息区块 -->
+            <div class="section-header"> <!-- 区块头 -->
+                <div class="section-title">学籍信息 (2)</div> <!-- 标题 -->
+                <div class="section-tip">还有学籍没有显示出来？<a href="#">尝试绑定</a></div> <!-- 提示 -->
+            </div>
+            <div class="edu-card green" id="toUserDetail"> <!-- 学籍卡片1 -->
+                <div class="edu-school">西安工业大学</div> <!-- 学校 -->
+                <div class="edu-badge">硕士研究生</div> <!-- 学历 -->
+                <div class="edu-major">新闻与传播 <span>|</span> 全日制</div> <!-- 专业 -->
+            </div>
+            <div class="edu-card green" id="toUserDetail2"> <!-- 学籍卡片2 -->
+                <div class="edu-school">西安工业大学</div>
+                <div class="edu-badge">本科</div>
+                <div class="edu-major">新闻与传播 <span>|</span> 全日制</div>
+            </div>
+        </div>
+
+        <!-- 学历信息模块 -->
+        <div class="info-section"> <!-- 学历区块 -->
+            <div class="section-header">
+                <div class="section-title">学历信息 (1)</div>
+                <div class="section-tip">还有学历没有显示出来？<a href="#">尝试绑定</a></div>
+            </div>
+            <div class="edu-card blue"> <!-- 学历卡片 -->
+                <div class="edu-school">西安工业大学</div>
+                <div class="edu-badge">本科</div>
+                <div class="edu-major">网络与新媒体 <span>|</span> 普通全日制</div>
+            </div>
+        </div>
+
+        <!-- 学位信息模块 -->
+        <div class="info-section"> <!-- 学位区块 -->
+            <div class="section-header">
+                <div class="section-title">学位信息</div>
+                <div class="section-tip">还有学位没有显示出来？<a href="#">尝试绑定</a></div>
+            </div>
+            <div class="degree-section"> <!-- 学位提示 -->
+                您还未绑定学位信息，可以使用 “尝试绑定学位” 功能绑定您的学位 ⓘ
+                <div class="degree-tip"><a href="#">提示信息 ▾</a></div>
+            </div>
+        </div>
+
+        <!-- 考研信息模块 -->
+        <div class="info-section"> <!-- 考研区块 -->
+            <div class="section-header">
+                <div class="section-title">考研信息 (1)</div>
+            </div>
+            <div class="exam-card"> <!-- 考研卡片 -->
+                <div class="exam-school">西安工业大学</div>
+            </div>
+        </div>
+
+        <!-- 第四界面底部导航 -->
+        <div class="edu-footer-nav"> <!-- 底部导航 -->
+            <div class="edu-footer-nav-item active"> <!-- 首页 -->
+                <i class="fas fa-home"></i>
+                <span>首页</span>
+            </div>
+            <div class="edu-footer-nav-item"> <!-- 学籍学历学位 -->
+                <i class="fas fa-graduation-cap"></i>
+                <span>学籍学历学位</span>
+            </div>
+            <div class="edu-footer-nav-item"> <!-- 个人测评 -->
+                <i class="fas fa-check-square"></i>
+                <span>个人测评</span>
+            </div>
+            <div class="edu-footer-nav-item"> <!-- 求职招聘 -->
+                <i class="fas fa-briefcase"></i>
+                <span>求职招聘</span>
+            </div>
+            <div class="edu-footer-nav-item"> <!-- 我的 -->
+                <i class="fas fa-user"></i>
+                <span>我的</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- 第五界面：用户独立详情页 -->
+    <div class="user-detail-container" id="userDetailPage"> <!-- 用户详情页 -->
+        <div class="user-detail-header"> <!-- 头部 -->
+            <i class="fas fa-arrow-left back-icon" id="backToEduInfo"></i> <!-- 返回 -->
+            <h1>学籍详情</h1> <!-- 标题 -->
+        </div>
+        <div class="user-detail-content"> <!-- 内容区 -->
+            <img src="" id="userDetailImg" class="user-detail-img"> <!-- 详情图片 -->
+        </div>
+    </div>
+</div> <!-- page-wrapper 结束 -->
 
 <!-- 后台 -->
-<div id="adminPage" style="display:none; position:fixed; top:0; left:0; width:100vw; height:100vh; background:#fff; z-index:9999; padding:20px; box-sizing:border-box; overflow-y:auto;">
-  <h2 style="text-align:center; margin-bottom:30px;">用户管理后台</h2>
-  <div id="userList" style="max-width:800px; margin:0 auto;"></div>
-  <button onclick="closeAdmin()" style="position:fixed; top:20px; right:20px; padding:8px 16px; background:#000; color:#fff; border:none; border-radius:4px; cursor:pointer;">关闭后台</button>
+<div id="adminPage"> <!-- 管理员页面 -->
+  <h2 style="text-align:center; margin-bottom:30px;">用户管理后台</h2> <!-- 标题 -->
+  <div id="userList" style="max-width:800px; margin:0 auto;"></div> <!-- 用户列表 -->
+  <button onclick="closeAdmin()" style="position:fixed; top:20px; right:20px; padding:8px 16px; background:#000; color:#fff; border:none; border-radius:4px; cursor:pointer;">关闭后台</button> <!-- 关闭按钮 -->
 </div>
 
-<script>
-    const userDatabase = {
-        "13603846915": { 
-            password: "123456", 
-            redirectUrl: "https://s41.ax1x.com/2026/03/31/pe82peP.jpg" 
+<script> <!-- JS 开始 -->
+
+    // ====================== 核心配置：账号 + 密码 + 对应第五页图片 ======================
+    const userConfig = { // 用户配置对象
+        "1": { 
+            password: "1", // 密码
+            imgUrl: "https://pic1.imgdb.cn/item/69cd55745a6f8fe2e6ca9c68.jpg" // 对应图片
         },
-        "18207595311ljy": { 
-            password: "123456", 
-            redirectUrl: "https://pic1.imgdb.cn/item/69cd441e5a6f8fe2e6ca6f47.jpg" 
+        "17721362604": { 
+            password: "lyx123456",
+            imgUrl: "https://i.imglt.com/20260404/c7e5666880624397d1f500dd535d0a6c.jpg"
         },
-        "18207595311myt": { 
-            password: "123456", 
-            redirectUrl: "https://pic1.imgdb.cn/item/69cd441e5a6f8fe2e6ca6f43.jpg" 
-        },
-        "123456yuchen": { 
-            password: "123456", 
-            redirectUrl: "https://pic1.imgdb.cn/item/69cd55655a6f8fe2e6ca9c43.jpg" 
-        },
-        "123456limin": { 
-            password: "123456", 
-            redirectUrl: "https://pic1.imgdb.cn/item/69cd55745a6f8fe2e6ca9c68.jpg" 
-        },
-        "123456gaoss": { 
-            password: "123456", 
-            redirectUrl: "https://pic1.imgdb.cn/item/69cd564b5a6f8fe2e6ca9e13.jpg" 
-        },
-        "he19173551928": { 
-            password: "123456", 
-            redirectUrl: "https://pic1.imgdb.cn/item/69cdba3d5a6f8fe2e6cbbc98.jpg" 
-        },
-        "13205687359": { 
-            password: "du123456", 
-            redirectUrl: "https://pic1.imgdb.cn/item/69ce0f46e22aad8a0c6469e1.jpg" 
-        },
-        "13205687358": { 
-            password: "yu123456", 
-            redirectUrl: "https://pic1.imgdb.cn/item/69ce0f45e22aad8a0c6469dc.jpg" 
-        },
-        "15612320514": { 
-            password: "lzt123456", 
-            redirectUrl: "https://pic1.imgdb.cn/item/69ce40c438e406efb436fc0a.jpg" 
-        },
-        "15612320515": { 
-            password: "zm123456", 
-            redirectUrl: "https://pic1.imgdb.cn/item/69ce40d838e406efb436fc0c.jpg" 
-        },
-        "18803775620": { 
-            password: "hy123456", 
-            redirectUrl: "https://pic1.imgdb.cn/item/69ce574238e406efb43723ef.jpg" 
-        },
-        "18803775621": { 
-            password: "zmd123456", 
-            redirectUrl: "https://pic1.imgdb.cn/item/69ce574238e406efb43723ee.jpg" 
+        "3": { 
+            password: "3",
+            imgUrl: "https://pic1.imgdb.cn/item/69cd55745a6f8fe2e6ca9c68.jpg"
         }
     };
 
-    let clickCount = 0;
-    const topProgress = document.getElementById('topProgress');
-    const BACK_DELAY = 1500;
-    const FORWARD_DELAY = 1500;
+    // 页面跳转加载条函数
+    const pageLoader = document.getElementById('pageLoader'); // 获取顶部进度条
+    function showPageLoader() { // 显示进度条
+        pageLoader.style.width = '100%'; // 拉满
+        setTimeout(() => { // 1 秒后重置
+            pageLoader.style.width = '0%';
+        }, 1000);
+    }
 
-    document.addEventListener('DOMContentLoaded', function() {
-        const adminBtn = document.getElementById('adminBtn');
-        adminBtn.onclick = function() {
-            clickCount++;
-            if (clickCount === 3) {
-                const adminPwd = prompt("请输入管理员密码：");
-                if(adminPwd === "zjl"){
-                    document.getElementById('loginPage').style.display = 'none';
-                    document.getElementById('adminPage').style.display = 'block';
-                    renderUserList();
+    let clickCount = 0; // 记录点击次数
+    document.addEventListener('DOMContentLoaded', function() { // DOM 加载完成
+        const adminBtn = document.getElementById('adminBtn'); // 管理员入口
+        adminBtn.onclick = function() { // 点击事件
+            clickCount++; // 计数
+            if (clickCount === 3) { // 连续三次
+                const adminPwd = prompt("请输入管理员密码："); // 弹窗
+                if(adminPwd === "zjl"){ // 校验密码
+                    document.getElementById('loginPage').style.display = 'none'; // 隐藏登录页
+                    document.getElementById('adminPage').style.display = 'block'; // 显示后台
                 } else {
-                    alert("管理员密码错误！");
+                    alert("管理员密码错误！"); // 错误提示
                 }
-                clickCount = 0;
+                clickCount = 0; // 重置
             }
-            setTimeout(() => clickCount = 0, 800);
+            setTimeout(() => clickCount = 0, 800); // 超时重置
         };
     });
 
-    const loginPage = document.getElementById('loginPage');
-    const mainPage = document.getElementById('mainPage');
-    const loadingPage = document.getElementById('loadingPage');
-    const loginBtn = document.getElementById('loginBtn');
-    const usernameInput = document.getElementById('username');
-    const passwordInput = document.getElementById('password');
-    const studentQueryBtn = document.getElementById('studentQuery');
-    const studentPage = document.getElementById('studentPage');
-    const studentImg = document.getElementById('studentImg');
+    const loginPage = document.getElementById('loginPage'); // 登录页
+    const mainPage = document.getElementById('mainPage'); // 主页面
+    const newHomePage = document.getElementById('newHomePage'); // 新首页
+    const eduInfoPage = document.getElementById('eduInfoPage'); // 教育信息页
+    const userDetailPage = document.getElementById('userDetailPage'); // 用户详情页
+    const loadingPage = document.getElementById('loadingPage'); // 加载页
+    const loginBtn = document.getElementById('loginBtn'); // 登录按钮
+    const usernameInput = document.getElementById('username'); // 用户名输入框
+    const passwordInput = document.getElementById('password'); // 密码输入框
+    const studentQueryBtn = document.getElementById('studentQuery'); // 学籍查询按钮
+    const backToMainBtn = document.getElementById('backToMain'); // 返回主页面
+    const eduInfoBtn = document.getElementById('eduInfoBtn'); // 教育信息按钮
+    const backToNewHomeBtn = document.getElementById('backToNewHome'); // 返回新首页
+    const backToEduInfoBtn = document.getElementById('backToEduInfo'); // 返回教育信息页
+    const userDetailImg = document.getElementById('userDetailImg'); // 详情图片
+    const toUserDetail = document.getElementById('toUserDetail'); // 学籍卡片1
+    const toUserDetail2 = document.getElementById('toUserDetail2'); // 学籍卡片2
 
     // 登录逻辑
-    loginBtn.addEventListener('click', function() {
-        const username = usernameInput.value.trim();
-        const password = passwordInput.value.trim();
+    loginBtn.addEventListener('click', function() { // 登录按钮点击
+        const username = usernameInput.value.trim(); // 获取用户名
+        const password = passwordInput.value.trim(); // 获取密码
 
-        if (!username || !password) {
+        if (!username || !password) { // 判空
             alert('请输入手机号/邮箱和密码');
             return;
         }
 
-        const user = userDatabase[username];
-        if (user && user.password === password) {
-            sessionStorage.setItem('currentUser', username);
-            sessionStorage.setItem('redirectUrl', user.redirectUrl);
+        const user = userConfig[username]; // 查找用户
+        if (user && user.password === password) { // 校验
+            sessionStorage.setItem('currentUser', username); // 保存会话
             
-            loginPage.style.display = 'none';
-            loadingPage.style.display = 'flex';
+            loginPage.style.display = 'none'; // 隐藏登录页
+            loadingPage.style.display = 'flex'; // 显示加载页
             
-            setTimeout(() => {
+            setTimeout(() => { // 2 秒后进入主页面
                 loadingPage.style.display = 'none';
                 mainPage.style.display = 'block';
             }, 2000);
             
         } else {
-            alert('账号或密码错误');
+            alert('账号或密码错误'); // 错误提示
         }
     });
 
-    // 学籍查询
+    // 学籍查询：跳转到第三界面
     studentQueryBtn.addEventListener('click', function() {
-        const redirectUrl = sessionStorage.getItem('redirectUrl');
-        if (!redirectUrl) {
-            alert('请先登录');
+        showPageLoader(); // 显示进度条
+        setTimeout(() => {
+            mainPage.style.display = 'none'; // 隐藏主页面
+            newHomePage.style.display = 'block'; // 显示新首页
+            history.pushState({page: 'newHome'}, null, ''); // 历史记录
+        }, 1000);
+    });
+
+    // 返回主页面
+    backToMainBtn.addEventListener('click', function() {
+        showPageLoader();
+        setTimeout(() => {
+            newHomePage.style.display = 'none';
+            mainPage.style.display = 'block';
+        }, 1000);
+    });
+
+    // 跳转到第四界面
+    eduInfoBtn.addEventListener('click', function() {
+        showPageLoader();
+        setTimeout(() => {
+            newHomePage.style.display = 'none';
+            eduInfoPage.style.display = 'block';
+            history.pushState({page: 'eduInfo'}, null, '');
+        }, 1000);
+    });
+
+    // 返回第三界面
+    backToNewHomeBtn.addEventListener('click', function() {
+        showPageLoader();
+        setTimeout(() => {
+            eduInfoPage.style.display = 'none';
+            newHomePage.style.display = 'block';
+        }, 1000);
+    });
+
+    // 点击绿色学籍卡片 → 跳转到第五页面（显示当前账号对应图片）
+    function goToUserDetail(){ // 跳转详情页
+        const currentUser = sessionStorage.getItem('currentUser'); // 当前用户
+        if(!currentUser || !userConfig[currentUser]){ // 未登录
+            alert('请先登录！');
             return;
         }
-
-        topProgress.style.width = '0%';
-        let width = 0;
-        const interval = setInterval(() => {
-            width += 100 / (FORWARD_DELAY / 50);
-            if (width >= 100) width = 100;
-            topProgress.style.width = width + '%';
-        }, 50);
-
+        showPageLoader();
         setTimeout(() => {
-            clearInterval(interval);
-            topProgress.style.width = '0%';
-            studentImg.src = redirectUrl;
-            mainPage.style.display = 'none';
-            studentPage.style.display = 'block';
-            history.pushState({page: 'student'}, null, '');
-        }, FORWARD_DELAY);
+            eduInfoPage.style.display = 'none';
+            userDetailPage.style.display = 'block';
+            userDetailImg.src = userConfig[currentUser].imgUrl; // 设置图片
+            history.pushState({page: 'userDetail'}, null, '');
+        }, 1000);
+    }
+    toUserDetail.addEventListener('click', goToUserDetail); // 绑定事件
+    toUserDetail2.addEventListener('click', goToUserDetail);
+
+    // 从第五页返回第四页
+    backToEduInfoBtn.addEventListener('click', function() {
+        showPageLoader();
+        setTimeout(() => {
+            userDetailPage.style.display = 'none';
+            eduInfoPage.style.display = 'block';
+        }, 1000);
     });
 
-    // 返回主页
-    function goBack() {
-        if(studentPage.style.display !== 'block') return;
-        
-        topProgress.style.width = '0%';
-        let width = 0;
-        const interval = setInterval(() => {
-            width += 100 / (BACK_DELAY / 50);
-            if(width >= 100) width = 100;
-            topProgress.style.width = width + '%';
-        }, 50);
-
-        setTimeout(() => {
-            clearInterval(interval);
-            topProgress.style.width = '0%';
-            studentPage.style.display = 'none';
+    // 手机返回键兼容
+    window.onpopstate = function(e) { // 监听返回
+        if (userDetailPage.style.display === 'block') {
+            userDetailPage.style.display = 'none';
+            eduInfoPage.style.display = 'block';
+        } else if (eduInfoPage.style.display === 'block') {
+            eduInfoPage.style.display = 'none';
+            newHomePage.style.display = 'block';
+        } else if (newHomePage.style.display === 'block') {
+            newHomePage.style.display = 'none';
             mainPage.style.display = 'block';
-        }, BACK_DELAY);
-    }
-
-    // 点击图片返回
-    studentPage.addEventListener('click', goBack);
-
-    window.onpopstate = function(e) {
-        if (studentPage.style.display === 'block') {
-            goBack();
         }
     };
 
-    document.addEventListener('DOMContentLoaded', function() {
-        const savedUser = sessionStorage.getItem('currentUser');
-        if (savedUser) {
+    document.addEventListener('DOMContentLoaded', function() { // DOM 加载完成
+        const savedUser = sessionStorage.getItem('currentUser'); // 读取会话
+        if (savedUser) { // 已登录
             loginPage.style.display = 'none';
             mainPage.style.display = 'block';
         }
 
-        document.querySelectorAll('.footer-nav-item').forEach(item => {
+        // 底部导航切换
+        document.querySelectorAll('.footer-nav-item, .new-footer-nav-item, .edu-footer-nav-item').forEach(item => {
             item.addEventListener('click', function() {
-                document.querySelectorAll('.footer-nav-item').forEach(nav => nav.classList.remove('active'));
-                this.classList.add('active');
+                const parent = this.closest('.footer-nav, .new-footer-nav, .edu-footer-nav');
+                parent.querySelectorAll('.footer-nav-item, .new-footer-nav-item, .edu-footer-nav-item').forEach(nav => nav.classList.remove('active'));
+                this.classList.add('active'); // 激活当前
             });
         });
 
-        document.querySelectorAll('.icon-item:not(#studentQuery), .service-item').forEach(item => {
+        // 未实现功能提示
+        document.querySelectorAll('.icon-item:not(#studentQuery), .service-item, .func-item:not(#eduInfoBtn)').forEach(item => {
             item.addEventListener('click', function() {
-                const name = this.querySelector('.icon-text, .service-text').textContent;
+                const name = this.querySelector('.icon-text, .service-text, .func-text').textContent;
                 alert(`您点击了：${name}\n功能开发中...`);
             });
         });
+
+        document.querySelector('.test-btn').addEventListener('click', function() {
+            alert('决断力测试功能开发中...');
+        });
     });
 
-    function renderUserList() {
-        const userList = document.getElementById('userList');
-        userList.innerHTML = '';
-        for (let oldUser in userDatabase) {
-            const userItem = document.createElement('div');
-            userItem.style.margin = '15px 0';
-            userItem.style.padding = '10px';
-            userItem.style.border = '1px solid #eee';
-            userItem.style.borderRadius = '8px';
-            userItem.innerHTML = `
-                <div style="margin:8px 0;">
-                    <label>账号：</label>
-                    <input type="text" value="${oldUser}" id="u_${oldUser}" style="padding:6px 8px; margin-left:10px; width:150px;">
-                </div>
-                <div style="margin:8px 0;">
-                    <label>密码：</label>
-                    <input type="text" value="${userDatabase[oldUser].password}" id="p_${oldUser}" style="padding:6px 8px; margin-left:10px; width:150px;">
-                </div>
-                <div style="margin:8px 0;">
-                    <label>跳转图片URL：</label>
-                    <input type="text" value="${userDatabase[oldUser].redirectUrl}" id="r_${oldUser}" style="padding:6px 8px; margin-left:10px; width:350px;">
-                </div>
-                <button onclick="saveUser('${oldUser}')" style="padding:6px 12px; background:#21b573; color:#fff; border:none; border-radius:4px; cursor:pointer; margin-right:10px;">保存修改</button>
-                <button onclick="delUser('${oldUser}')" style="padding:6px 12px; background:#ff4d4f; color:#fff; border:none; border-radius:4px; cursor:pointer;">删除账号</button>
-            `;
-            userList.appendChild(userItem);
-        }
-
-        const addBtn = document.createElement('div');
-        addBtn.style.marginTop = '20px';
-        addBtn.innerHTML = `<button onclick="addUser()" style="padding:8px 16px; background:#000; color:#fff; border:none; border-radius:4px; cursor:pointer;">添加新用户</button>`;
-        userList.appendChild(addBtn);
-    }
-
-    function saveUser(oldUser) {
-        const newUsername = document.getElementById('u_' + oldUser).value.trim();
-        const newPassword = document.getElementById('p_' + oldUser).value.trim();
-        const newRedirectUrl = document.getElementById('r_' + oldUser).value.trim();
-        if (!newUsername || !newPassword) { alert('账号密码不能为空！'); return; }
-        delete userDatabase[oldUser];
-        userDatabase[newUsername] = { password: newPassword, redirectUrl: newRedirectUrl };
-        renderUserList();
-        alert('修改成功！');
-    }
-
-    function delUser(user) {
-        if (confirm('确定删除？')) {
-            delete userDatabase[user];
-            renderUserList();
-            alert('删除成功！');
-        }
-    }
-
-    function addUser() {
-        const u = prompt('输入新账号：');
-        if (!u) return;
-        if (userDatabase[u]) { alert('已存在'); return; }
-        userDatabase[u] = { password: '123456', redirectUrl: '' };
-        renderUserList();
-        alert('添加成功！默认密码123456');
-    }
-
-    function closeAdmin() {
+    function closeAdmin() { // 关闭后台
         document.getElementById('adminPage').style.display = 'none';
         document.getElementById('loginPage').style.display = 'flex';
     }
-</script>
-</body>
-</html>
+</script> <!-- JS 结束 -->
+</body> <!-- body 结束 -->
+</html> <!-- HTML 结束 -->
